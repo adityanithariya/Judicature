@@ -1,0 +1,13 @@
+{
+    "name": "judicature",
+    "version": "1.0.0",
+    "description": "Administration of Justice",
+    "main": "index.js",
+    "repository": "https://github.com/adityanithariya/Judicature",
+    "author": "Aditya Soni (adityanithariya)",
+    "license": "MIT",
+    "dependencies": {
+        "fabric-contract-api": "^2.5.4",
+        "fabric-shim": "^2.5.4"
+    }
+}

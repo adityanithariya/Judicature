@@ -1,0 +1,22 @@
+{
+    "name": "judicature",
+    "version": "1.0.0",
+    "description": "Administration of Justice",
+    "main": "index.js",
+    "repository": "https://github.com/adityanithariya/Judicature",
+    "author": "Aditya Soni (adityanithariya)",
+    "license": "MIT",
+    "dependencies": {
+        "@graphql-tools/load-files": "^7.0.0",
+        "@graphql-tools/merge": "^9.0.0",
+        "apollo-server": "^3.12.1",
+        "fabric-ca-client": "^2.2.19",
+        "fabric-network": "^2.2.19",
+        "graphql": "^16.8.1",
+        "graphql-tools": "^9.0.0",
+        "nodemon": "^3.0.1"
+    },
+    "scripts": {
+        "dev": "nodemon index.js"
+    }
+}

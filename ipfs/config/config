@@ -1,0 +1,120 @@
+{
+  "API": {
+    "HTTPHeaders": {}
+  },
+  "Addresses": {
+    "API": "/ip4/127.0.0.1/tcp/5001",
+    "Announce": [],
+    "Gateway": "/ip4/127.0.0.1/tcp/8080",
+    "NoAnnounce": [],
+    "Swarm": [
+      "/ip4/0.0.0.0/tcp/4001",
+      "/ip6/::/tcp/4001"
+    ]
+  },
+  "Bootstrap": null,
+  "Datastore": {
+    "BloomFilterSize": 0,
+    "GCPeriod": "1h",
+    "HashOnRead": false,
+    "Spec": {
+      "mounts": [
+        {
+          "child": {
+            "path": "blocks",
+            "shardFunc": "/repo/flatfs/shard/v1/next-to-last/2",
+            "sync": true,
+            "type": "flatfs"
+          },
+          "mountpoint": "/blocks",
+          "prefix": "flatfs.datastore",
+          "type": "measure"
+        },
+        {
+          "child": {
+            "compression": "none",
+            "path": "datastore",
+            "type": "levelds"
+          },
+          "mountpoint": "/",
+          "prefix": "leveldb.datastore",
+          "type": "measure"
+        }
+      ],
+      "type": "mount"
+    },
+    "StorageGCWatermark": 90,
+    "StorageMax": "10GB"
+  },
+  "Discovery": {
+    "MDNS": {
+      "Enabled": true,
+      "Interval": 10
+    }
+  },
+  "Experimental": {
+    "FilestoreEnabled": false,
+    "Libp2pStreamMounting": false,
+    "P2pHttpProxy": false,
+    "QUIC": false,
+    "ShardingEnabled": false,
+    "UrlstoreEnabled": false
+  },
+  "Gateway": {
+    "APICommands": [],
+    "HTTPHeaders": {
+      "Access-Control-Allow-Headers": [
+        "X-Requested-With",
+        "Range"
+      ],
+      "Access-Control-Allow-Methods": [
+        "GET"
+      ],
+      "Access-Control-Allow-Origin": [
+        "*"
+      ]
+    },
+    "PathPrefixes": [],
+    "RootRedirect": "",
+    "Writable": false
+  },
+  "Identity": {
+    "PeerID": "QmYcRMdagEkKZvPEJ6KYriTXZRcM8R1CEVKEAards19JE7",
+    "PrivKey": "CAASpwkwggSjAgEAAoIBAQDFSYAeQyh/6q0bHolHY0M0OW3dGlrUIIJz+kKMhj+WBsNggCpV8SDlTf45L839B0s45g/E3s6sIodNp4TsgXb/CK6KKJ4C3jQ7cAChy0QKbKl1JurstDi3HRgT9FWIiaw1S+D5lYJ9muE2d6uLo6bsLWEycwv4y9jKYR1jmfT/LjSlkhVKnZpYM+XBmHR+4m7psRJJt4gL9RQK8fS+gFC5kJ2XD16cUGKFXj47ZzfpsV8ukwkf3UbEgv9M8ZtJ3Jurur4M316rXauoyxf8z7TU1ilolN5IlUG3NznUdkS1wdrshUEnK7nANluJgp79oXcJfiP3/GpNZwoblTvUTSYNAgMBAAECggEBAKv2GPpHx3FX+HL+9uGGn/lRZXWnlyv2+j5lEMSz75CxbHMcw8oNV4MHrGPkS0QVq3d48J3FJ5fasNz6+126qyI5SwmZxcDyNczpH2PnbPM5K6u1tGeF3zmc3nPmMPfGKJh7/ykNLKSW718uiBQ7HTAXjfUPWowOAnTEmX1LoMUa1WYXXoBdev3Pe45b50+ELKpaWrRU5wY/ndT8NcphDLAHmeVUcU5Bcfa+B8VLQz+ELLLfSy8qnFTha9/iUOPUnYu7TB2iqQnCUwfV2ZOKq/UiGmXgauubqRAdpy7aXL0jQHtQ+a/iJiLLqyKAS2swBqvwMCAqC7eMaQRd3RRj0vECgYEA5USoYNw1lU2r22Lh9BVErBbv10bwwuwwOfQvujn3+q27UkJAHtVmL24l4Y+Z4PQ/bp2RZ9luKfGunNS1UdirYQ9rfnsrmCHYWjg9QopPOlcS6A7tP2OBX7snU2ltPay9IT/zqsWFaD0KdwbcaR5TLPykG0ZtwcREGfcWMyEm2E8CgYEA3EpASMmPR8O7GvYLv/HR1cJ27EARIS1vQVt+1ScpYwB3g+IlGjphmmWcN0xwySb+sWruh5gdSHUffahNkGIgtofn9bpmSanTfVAIULMbEuX08rD+wUbQ7SvgU+zdoXOIxzuFdwsIStuOWdyRdigtWdxrxXhGM8uD/IagsT9BKOMCgYBL9k2bmhqe11dDnyWiS5GvOwJIX5bR3pOz//X4S9Cf3AQeoxi/npD20hX3AC9J22NQ8SAGOoJHn23tRIS3E4Tk6ckB5SlyhHQ8oDmb3FuXxtXa0WdGA2AQKeBDwMCTGLKpW5kOUdd7zA21li5dHdENLL/q0ZD4DGFMARP36NoH/QKBgDXhu4OSOYeWKofXstwKLAca/7ednBL/Z/0Wghlk8MyUaqdJg0W9De6T9/fWrKem8Bk5TIrB/Dei3kcACajNN68t4uDJ7QcLkP1PvBjxFigzMwzBmi5wQd4hI0ej4joBZm1E88pAWpDkzxbPyoyaGy2lqn6sgo9csjXsQBXaoPd9AoGAXsSC4uPG4paGV0J92zAdSn1fKGeRG54fr2W7dOZDzc5F1OOSRvGsivQlbTfq9e5QMpCOkW2JG8RiTyvhqvnnUjQNXanLcDW+H3/adPtyh1jkKcIVbSG3QUKPFKdLm8vtVp5CtbJ8ox7ZKtDfcvb8o9HbE1hFJrw+UWP6dXzlNdw="
+  },
+  "Ipns": {
+    "RecordLifetime": "",
+    "RepublishPeriod": "",
+    "ResolveCacheSize": 128
+  },
+  "Mounts": {
+    "FuseAllowOther": false,
+    "IPFS": "/ipfs",
+    "IPNS": "/ipns"
+  },
+  "Pubsub": {
+    "DisableSigning": false,
+    "Router": "",
+    "StrictSignatureVerification": false
+  },
+  "Reprovider": {
+    "Interval": "12h",
+    "Strategy": "all"
+  },
+  "Routing": {
+    "Type": "dht"
+  },
+  "Swarm": {
+    "AddrFilters": null,
+    "ConnMgr": {
+      "GracePeriod": "20s",
+      "HighWater": 900,
+      "LowWater": 600,
+      "Type": "basic"
+    },
+    "DisableBandwidthMetrics": false,
+    "DisableNatPortMap": false,
+    "DisableRelay": false,
+    "EnableRelayHop": false
+  }
+}
