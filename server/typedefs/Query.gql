@@ -1,3 +1,3 @@
 type Query {
-    users(id: ID!): User!
+    users(id: ID!): User
 }
