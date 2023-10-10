@@ -1,19 +1,20 @@
-const { ApolloServer } = require('apollo-server');
-const { loadFilesSync } = require('@graphql-tools/load-files');
-const { mergeTypeDefs, mergeResolvers } = require('@graphql-tools/merge');
-const path = require('path');
+const mongoose = require('mongoose');
+const dotenv = require('dotenv');
+dotenv.config({ path: './config.env' });
 
-const typeDefsArray = loadFilesSync(path.join(__dirname, './**/*.gql'));
-const typeDefs = mergeTypeDefs(typeDefsArray);
-
-const resolversArray = loadFilesSync(
-    path.join(__dirname, './resolvers/**/*.js')
+let DB = process.env.DATABASE.replace(
+    '<password>',
+    process.env.DATABASE_PASSWORD
 );
-const resolvers = mergeResolvers(resolversArray);
 
-const server = new ApolloServer({
-    typeDefs,
-    resolvers,
-});
+const connect = async () => {
+    await mongoose
+        .connect(DB, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+        })
+        .then(() => console.log('DB connection successful!'))
+        .catch((err) => console.log(err));
+};
 
-module.exports = server;
+module.exports = connect;

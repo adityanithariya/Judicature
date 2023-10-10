@@ -1,24 +1,34 @@
-const mongoose = require('mongoose');
-const dotenv = require('dotenv');
-dotenv.config({ path: './config.env' });
+const { ApolloServer } = require('apollo-server');
+const { loadFilesSync } = require('@graphql-tools/load-files');
+const { mergeTypeDefs, mergeResolvers } = require('@graphql-tools/merge');
+const path = require('path');
 
-const app = require('./app');
+const connect = require('./app');
 
-let DB = process.env.DATABASE.replace(
-    '<password>',
-    process.env.DATABASE_PASSWORD
+connect();
+
+const typeDefsArray = loadFilesSync(path.join(__dirname, './**/*.gql'));
+const typeDefs = mergeTypeDefs(typeDefsArray);
+
+const resolversArray = loadFilesSync(
+    path.join(__dirname, './resolvers/**/*.js')
 );
+const resolvers = mergeResolvers(resolversArray);
 
-mongoose
-    .connect(DB, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-    })
-    .then(() => console.log('DB connection successful!'))
-    .catch((err) => console.log(err));
+const server = new ApolloServer({
+    cors: {
+        origin: '*',
+        credentials: true,
+    },
+    typeDefs,
+    resolvers,
+    context: ({ req, res }) => {
+        return { req, res };
+    },
+});
 
 const port = process.env.PORT || 4000;
 
-app.listen(port, () => {
+server.listen(port, () => {
     console.log(`App running on http://localhost:${port}`);
 });
