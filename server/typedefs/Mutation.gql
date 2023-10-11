@@ -1,3 +1,4 @@
 type Mutation {
-    addUser(name: String!, email: String!): User!
+    signUp(user: signUpUser!): User!
+    logIn(user: logInUser!): User!
 }
