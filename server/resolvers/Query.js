@@ -1,6 +1,8 @@
 const authController = require('../controllers/authController');
 const User = require('../models/User.js');
 const { GraphQLError } = require('graphql');
+const codes = require('./statusCodes');
+const codeMap = codes.code;
 
 exports.Query = {
     users: async (parent, args, context) => {
@@ -8,8 +10,10 @@ exports.Query = {
         if (response.status == 'fail') {
             throw new GraphQLError(response.message, {
                 extensions: {
-                    code: 'NOT_FOUND',
-                    http: { status: response.statuscode }
+                    code: codeMap[response.statuscode]
+                        ? codeMap[response.statuscode]
+                        : 'ERROR',
+                    http: { status: response.statuscode },
                 },
             });
         }

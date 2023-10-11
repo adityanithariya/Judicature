@@ -9,13 +9,12 @@ const signToken = (id) => {
 };
 
 exports.signUp = async (req, res) => {
-    const userDetails = req.body.variables.input;
+    const userDetails = req.body.variables.user;
     const newUser = await User.create({
         name: userDetails.name,
         email: userDetails.email,
         username: userDetails.username,
         password: userDetails.password,
-        passwordConfirm: userDetails.passwordConfirm,
     });
 
     const token = signToken(newUser._id);
@@ -27,16 +26,17 @@ exports.signUp = async (req, res) => {
             email: newUser.email,
             username: newUser.username,
         },
-        statuscode: 200,
+        statuscode: 201,
     };
 };
 
 exports.logIn = async (req, res) => {
-    const userDetails = req.body.variables.input;
+    const userDetails = req.body.variables.user;
     if (!userDetails.identity || !userDetails.password) {
         return {
             status: 'fail',
             message: 'Please provide email and password',
+            statuscode: 400,
         };
     }
     let user = await User.findOne({ email: userDetails.identity }).select(
@@ -49,12 +49,13 @@ exports.logIn = async (req, res) => {
     }
     if (
         !user ||
-        !(await user.correctPassword(userDetails.password, user.password))
+        !(await user.authenticate(userDetails.password, user.password))
     ) {
         res.cookie('jwt', undefined, { httpOnly: false, secure: false });
         return {
             status: 'fail',
             message: 'Incorrect email and password',
+            statuscode: 400,
         };
     }
     const token = signToken(user._id);
@@ -82,7 +83,7 @@ exports.protect = async (req, res) => {
         return {
             status: 'fail',
             message: 'You are not loged in please login',
-            statuscode: 401,
+            statuscode: 400,
         };
     }
 
@@ -95,7 +96,7 @@ exports.protect = async (req, res) => {
         return {
             status: 'fail',
             message: 'No user exists',
-            statuscode: 401,
+            statuscode: 400,
         };
     }
 
@@ -104,7 +105,7 @@ exports.protect = async (req, res) => {
     //   return {
     //     status: "fail",
     //     message: "Password Changed after token issued",
-    //     statuscode: 401,
+    //     statuscode: 400,
     //   };
     // }
 

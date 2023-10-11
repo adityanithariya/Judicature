@@ -10,7 +10,6 @@ input signUpUser {
     username: String!
     email: String!
     password: String!
-    passwordConfirm: String!
 }
 
 input logInUser {

@@ -1,4 +1,4 @@
 type Mutation {
-    signUp(input: signUpUser!): User!
-    logIn(input: logInUser!): User
+    signUp(user: signUpUser!): User!
+    logIn(user: logInUser!): User!
 }
