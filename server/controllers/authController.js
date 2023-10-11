@@ -35,7 +35,7 @@ exports.logIn = async (req, res) => {
             statusCode: 400,
         };
     }
-    let user = await User.findOne({ username: userDetails.identity }).select(
+    const user = await User.findOne({ username: userDetails.identity }).select(
         '+password'
     );
     if (

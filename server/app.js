@@ -2,24 +2,13 @@ const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 dotenv.config({ path: './config.env' });
 
-let DB = process.env.DATABASE.replace(
+const DB = process.env.DATABASE.replace(
     '<password>',
     process.env.DATABASE_PASSWORD
 );
 
-exports.connect = async () => {
-    await mongoose
-        .connect(DB, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-        })
-        .then(() => console.log('DB connected'))
-        .catch((err) => console.log(err));
-};
-
 let count = 0;
- exports.handleDisconnect = async () => {
-    
+const handleDisconnect = async () => {
     count++;
     console.log('Trying to connect to mongo. Attempt : ' + count);
 
@@ -28,7 +17,7 @@ let count = 0;
             useNewUrlParser: true,
             useUnifiedTopology: true,
         })
-        .then(() => console.log('DB connected'))
+        .then(() => console.log('MongoDB connected'))
         .catch((err) => {
             if (count >= 5) {
                 console.log('Mongo ERROR');
@@ -40,3 +29,13 @@ let count = 0;
         });
 };
 
+exports.connect = async () => {
+    await mongoose
+        .connect(DB, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+        })
+        .then(() => console.log('MongoDB connected'))
+        .catch((err) => console.log(err));
+    mongoose.connection.on('error', handleDisconnect);
+};
