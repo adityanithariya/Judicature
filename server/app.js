@@ -7,7 +7,7 @@ let DB = process.env.DATABASE.replace(
     process.env.DATABASE_PASSWORD
 );
 
-const connect = async () => {
+exports.connect = async () => {
     await mongoose
         .connect(DB, {
             useNewUrlParser: true,
@@ -17,4 +17,26 @@ const connect = async () => {
         .catch((err) => console.log(err));
 };
 
-module.exports = connect;
+let count = 0;
+ exports.handleDisconnect = async () => {
+    
+    count++;
+    console.log('Trying to connect to mongo. Attempt : ' + count);
+
+    await mongoose
+        .connect(DB, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+        })
+        .then(() => console.log('DB connected'))
+        .catch((err) => {
+            if (count >= 5) {
+                console.log('Mongo ERROR');
+                console.error(err);
+                process.exit(1);
+            } else {
+                setTimeout(handleDisconnect, 1000);
+            }
+        });
+};
+

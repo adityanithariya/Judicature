@@ -11,8 +11,6 @@ const signToken = (id) => {
 exports.signUp = async (req, res) => {
     const userDetails = req.body.variables.user;
     const newUser = await User.create({
-        name: userDetails.name,
-        email: userDetails.email,
         username: userDetails.username,
         password: userDetails.password,
     });
@@ -22,11 +20,9 @@ exports.signUp = async (req, res) => {
     return {
         status: 'success',
         data: {
-            name: newUser.name,
-            email: newUser.email,
             username: newUser.username,
         },
-        statuscode: 201,
+        statusCode: 201,
     };
 };
 
@@ -36,17 +32,12 @@ exports.logIn = async (req, res) => {
         return {
             status: 'fail',
             message: 'Please provide email and password',
-            statuscode: 400,
+            statusCode: 400,
         };
     }
-    let user = await User.findOne({ email: userDetails.identity }).select(
+    let user = await User.findOne({ username: userDetails.identity }).select(
         '+password'
     );
-    if (!user) {
-        user = await User.findOne({ username: userDetails.Identity }).select(
-            '+password'
-        );
-    }
     if (
         !user ||
         !(await user.authenticate(userDetails.password, user.password))
@@ -55,7 +46,7 @@ exports.logIn = async (req, res) => {
         return {
             status: 'fail',
             message: 'Incorrect email and password',
-            statuscode: 400,
+            statusCode: 400,
         };
     }
     const token = signToken(user._id);
@@ -65,11 +56,9 @@ exports.logIn = async (req, res) => {
     return {
         status: 'success',
         data: {
-            name: user.name,
-            email: user.email,
             username: user.username,
         },
-        statuscode: 200,
+        statusCode: 200,
     };
 };
 
@@ -83,7 +72,7 @@ exports.protect = async (req, res) => {
         return {
             status: 'fail',
             message: 'You are not loged in please login',
-            statuscode: 400,
+            statusCode: 400,
         };
     }
 
@@ -96,7 +85,7 @@ exports.protect = async (req, res) => {
         return {
             status: 'fail',
             message: 'No user exists',
-            statuscode: 400,
+            statusCode: 400,
         };
     }
 
@@ -105,13 +94,13 @@ exports.protect = async (req, res) => {
     //   return {
     //     status: "fail",
     //     message: "Password Changed after token issued",
-    //     statuscode: 400,
+    //     statusCode: 400,
     //   };
     // }
 
     req.user = currentUser;
     return {
         status: 'success',
-        statuscode: 200,
+        statusCode: 200,
     };
 };

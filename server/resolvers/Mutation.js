@@ -1,8 +1,7 @@
 const User = require('../models/User.js');
 const authController = require('../controllers/authController');
 const { GraphQLError } = require('graphql');
-const codes = require('./statusCodes');
-const codeMap = codes.code;
+const codeMap = require('./statusCodes');
 
 exports.Mutation = {
     signUp: async (parent, args, context) => {
@@ -10,10 +9,10 @@ exports.Mutation = {
         if (response.status == 'fail') {
             throw new GraphQLError(response.message, {
                 extensions: {
-                    code: codeMap[response.statuscode]
-                        ? codeMap[response.statuscode]
+                    code: codeMap[response.statusCode]
+                        ? codeMap[response.statusCode]
                         : 'ERROR',
-                    http: { status: response.statuscode },
+                    http: { status: response.statusCode },
                 },
             });
         }
@@ -25,10 +24,10 @@ exports.Mutation = {
         if (response.status == 'fail') {
             throw new GraphQLError(response.message, {
                 extensions: {
-                    code: codeMap[response.statuscode]
-                        ? codeMap[response.statuscode]
+                    code: codeMap[response.statusCode]
+                        ? codeMap[response.statusCode]
                         : 'ERROR',
-                    http: { status: response.statuscode },
+                    http: { status: response.statusCode },
                 },
             });
         }
