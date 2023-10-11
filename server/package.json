@@ -11,7 +11,6 @@
         "@graphql-tools/merge": "^9.0.0",
         "apollo-server": "^3.12.1",
         "bcryptjs": "^2.4.3",
-        "cookie-parser": "^1.4.6",
         "cors": "^2.8.5",
         "dotenv": "^16.3.1",
         "fabric-ca-client": "^2.2.19",
