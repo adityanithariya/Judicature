@@ -2,3 +2,4 @@ organizations/ordererOrganizations/*
 organizations/peerOrganizations/*
 genesis.block
 *.tx
+*.log
