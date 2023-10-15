@@ -34,7 +34,7 @@ Organizations:
       OrdererEndpoints:
           - '127.0.0.1:7050'
       AnchorPeers:
-          - Host: 127.0.0.1
+          - Host: orderer.sci.gov.in
             Port: 7051
 
     - &SCI

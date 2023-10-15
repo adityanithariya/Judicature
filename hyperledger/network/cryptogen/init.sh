@@ -1,4 +1,4 @@
-function generateCryptoMaterial() {
+generateCryptoMaterial() {
     echo "Generating crypto material"
 
     : ${CRYPTOGEN_PATH:="organizations"}
@@ -17,19 +17,19 @@ function generateCryptoMaterial() {
     cryptogen generate --config=./cryptogen/config-orderer.yaml --output=$CRYPTOGEN_PATH
 }
 
-function generateGenesisBlock() {
+generateGenesisBlock() {
     echo "Generating genesis block"
 
     cp ./config/configtx.yaml .
 
-    : ${CRYPTOGEN_PATH:="organizations"}
+    : ${ARTIFACTS_PATH:="channel-artifacts"}
     export FABRIC_CFG_PATH=.
 
-    configtxgen -profile OrdererGenesis -channelID system-channel -outputBlock ./$CRYPTOGEN_PATH/genesis.block
+    configtxgen -profile OrdererGenesis -channelID system-channel -outputBlock ./$ARTIFACTS_PATH/genesis.block
 
-    configtxgen -profile Raj -outputCreateChannelTx ./$CRYPTOGEN_PATH/raj.tx -channelID raj
+    configtxgen -profile Raj -outputCreateChannelTx ./$ARTIFACTS_PATH/raj.tx -channelID raj
 
-    configtxgen -profile HCRaj -outputCreateChannelTx ./$CRYPTOGEN_PATH/hcraj.tx -channelID hcraj
+    configtxgen -profile HCRaj -outputCreateChannelTx ./$ARTIFACTS_PATH/hcraj.tx -channelID hcraj
 
     rm ./configtx.yaml
 }

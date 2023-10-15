@@ -1,5 +1,6 @@
 organizations/ordererOrganizations/*
 organizations/peerOrganizations/*
-genesis.block
+*.block
 *.tx
 *.log
+*.tar.gz

@@ -119,7 +119,7 @@ services:
         networks:
             - test
         volumes:
-            - ./organizations/genesis.block:/var/hyperledger/orderer/genesis.block
+            - ./channel-artifacts/genesis.block:/var/hyperledger/orderer/genesis.block
             - ./organizations/ordererOrganizations/sci.gov.in/orderers/orderer.sci.gov.in/msp:/var/hyperledger/orderer/msp
             - ./organizations/ordererOrganizations/sci.gov.in/orderers/orderer.sci.gov.in/tls:/var/hyperledger/orderer/tls
 
@@ -154,7 +154,7 @@ services:
         networks:
             - test
         volumes:
-            - ./organizations/genesis.block:/var/hyperledger/orderer/orderer.genesis.block
+            - ./channel-artifacts/genesis.block:/var/hyperledger/orderer/orderer.genesis.block
             - ./organizations/ordererOrganizations/sci.gov.in/orderers/orderer2.sci.gov.in/msp:/var/hyperledger/orderer/msp
             - ./organizations/ordererOrganizations/sci.gov.in/orderers/orderer2.sci.gov.in/tls:/var/hyperledger/orderer/tls
 
@@ -189,7 +189,7 @@ services:
         networks:
             - test
         volumes:
-            - ./organizations/genesis.block:/var/hyperledger/orderer/orderer.genesis.block
+            - ./channel-artifacts/genesis.block:/var/hyperledger/orderer/orderer.genesis.block
             - ./organizations/ordererOrganizations/sci.gov.in/orderers/orderer3.sci.gov.in/msp:/var/hyperledger/orderer/msp
             - ./organizations/ordererOrganizations/sci.gov.in/orderers/orderer3.sci.gov.in/tls:/var/hyperledger/orderer/tls
 
@@ -201,7 +201,6 @@ services:
             - COUCHDB_PASSWORD=adminpw
         ports:
             - 5984:5984
-            - 5986:5986
         networks:
             - test
 
@@ -213,7 +212,6 @@ services:
             - COUCHDB_PASSWORD=adminpw
         ports:
             - 6984:5984
-            - 6986:5986
         networks:
             - test
 
@@ -225,7 +223,6 @@ services:
             - COUCHDB_PASSWORD=adminpw
         ports:
             - 7984:5984
-            - 7986:5986
         networks:
             - test
 
@@ -237,7 +234,6 @@ services:
             - COUCHDB_PASSWORD=adminpw
         ports:
             - 8984:5984
-            - 8986:5986
         networks:
             - test
 
@@ -259,7 +255,7 @@ services:
             - CORE_PEER_CHAINCODEADDRESS=peer0.main.sci.gov.in:7052
             - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:7052
             # Peer used to bootstrap gossip within organisation
-            - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.main.sci.gov.in:8051
+            # - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.main.sci.gov.in:8051
             # Exposed for discovery Service
             - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.main.sci.gov.in:7051
 
@@ -295,7 +291,7 @@ services:
         environment:
             - FABRIC_LOGGING_SPEC=info
             - ORDERER_GENERAL_LOGLEVEL=info
-            - CORE_PEER_LOCALMSPID=Org1MSP
+            - CORE_PEER_LOCALMSPID=HCRajMSP
 
             - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=artifacts_test
 
@@ -309,7 +305,7 @@ services:
             - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.hcraj.nic.in:7051
 
             - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
-            - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb1:6984
+            - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb1:5984
             - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=admin
             - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=adminpw
             - CORE_METRICS_PROVIDER=prometheus
@@ -337,7 +333,7 @@ services:
         environment:
             - FABRIC_LOGGING_SPEC=info
             - ORDERER_GENERAL_LOGLEVEL=info
-            - CORE_PEER_LOCALMSPID=Org2MSP
+            - CORE_PEER_LOCALMSPID=CentralGovtMSP
 
             - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=artifacts_test
 
@@ -351,7 +347,7 @@ services:
             - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.india.gov.in:10051
 
             - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
-            - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb2:7984
+            - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb2:5984
             - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=admin
             - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=adminpw
             - CORE_METRICS_PROVIDER=prometheus
@@ -379,7 +375,7 @@ services:
         environment:
             - FABRIC_LOGGING_SPEC=info
             - ORDERER_GENERAL_LOGLEVEL=info
-            - CORE_PEER_LOCALMSPID=Org2MSP
+            - CORE_PEER_LOCALMSPID=RajGovtMSP
 
             - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=artifacts_test
 
@@ -393,7 +389,7 @@ services:
             - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.raj.gov.in:9051
 
             - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
-            - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb3:8984
+            - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb3:5984
             - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=admin
             - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=adminpw
             - CORE_METRICS_PROVIDER=prometheus
@@ -412,17 +408,3 @@ services:
             # - ./channel/:/etc/hyperledger/channel/
         networks:
             - test
-
-    initializer:
-        image: curlimages/curl
-        deploy:
-            restart_policy:
-                condition: on-failure
-        depends_on:
-            - couchdb0
-        command:
-            [
-                'sh',
-                '-c',
-                'sleep 15 && curl -u admin:adminpw -X PUT couchdb0:5984/_users',
-            ]
