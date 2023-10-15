@@ -1,4 +1,5 @@
-if ! command -v ipfs >/dev/null 2>&1; then
+ipfs >/dev/null 2>&1
+if [ $? -ne 0 ]; then
 echo "IPFS not found!"
 
 if ! command -v go >/dev/null 2>&1; then
@@ -21,14 +22,21 @@ export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
 
 EOF
 
-source ~/.bashrc
 fi
 
 # Install IPFS
 echo "Installing IPFS..."
 wget https://dist.ipfs.io/go-ipfs/v0.4.18/go-ipfs_v0.4.18_linux-amd64.tar.gz
 tar xvfz go-ipfs_v0.4.18_linux-amd64.tar.gz
-sudo mv go ipfs/ipfs /usr/local/bin/ipfs
+sudo mv go ipfs/ipfs /usr/local/bin
+
+echo -e "\nexport IPFS_PATH=$IPFS_PATH\n" >> ~/.bashrc
+
+pushd ./go-ipfs/
+./install.sh
+popd
+
+source ~/.bashrc
 
 fi
 
