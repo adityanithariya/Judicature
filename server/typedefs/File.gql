@@ -1,0 +1,14 @@
+input inputFileData{
+    base64String: String!
+    extension: String!
+}
+
+input fileRetrieveData {
+    CID: String!
+    extension: String!
+}
+
+type fileData {
+    base64String: String!
+    extension: String!
+}
