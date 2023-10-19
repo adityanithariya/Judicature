@@ -1,7 +1,12 @@
 export PATH=${PWD}/../bin:${PWD}/../../bin:${PWD}/scripts:$PATH
 
 if ! command -v cryptogen >/dev/null 2>&1; then
-    echo "cryptogen not found!"
+    echo "bin not found!"
+    echo "Downloading bin & docker images..."
+    pushd ../../
+    curl -sSLO https://raw.githubusercontent.com/hyperledger/fabric/main/scripts/install-fabric.sh && chmod +x install-fabric.sh
+    ./install-fabric.sh b d
+    popd
 fi
 
 loading() {

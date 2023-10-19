@@ -32,7 +32,9 @@ Organizations:
               Type: Signature
               Rule: "OR('OrdererMSP.admin')"
       OrdererEndpoints:
-          - '127.0.0.1:7050'
+          - 'orderer.sci.gov.in:7050'
+          - 'orderer2.sci.gov.in:7050'
+          - 'orderer3.sci.gov.in:7050'
       AnchorPeers:
           - Host: orderer.sci.gov.in
             Port: 7051

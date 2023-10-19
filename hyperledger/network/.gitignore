@@ -4,3 +4,4 @@ organizations/peerOrganizations/*
 *.tx
 *.log
 *.tar.gz
+./configtx.yaml
