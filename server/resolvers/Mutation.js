@@ -1,5 +1,6 @@
 const User = require('../models/User.js');
 const authController = require('../controllers/authController');
+const fileController = require('../controllers/fileController');
 const { GraphQLError } = require('graphql');
 const codeMap = require('./statusCodes');
 
@@ -33,4 +34,24 @@ exports.Mutation = {
         }
         return response.data;
     },
+
+    uploadFile: async (parent, args, context) => {
+        const response = await fileController.uploadFile(
+            context.req,
+            context.res
+        );
+        if (response.status == 'fail') {
+            throw new GraphQLError(response.message, {
+                extensions: {
+                    code: codeMap[response.statusCode]
+                        ? codeMap[response.statusCode]
+                        : 'ERROR',
+                    http: { status: response.statusCode },
+                },
+            });
+        }
+        return response.data.message;
+    },
+
+    
 };

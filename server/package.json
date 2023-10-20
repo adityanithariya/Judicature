@@ -15,6 +15,7 @@
         "dotenv": "^16.3.1",
         "fabric-ca-client": "^2.2.19",
         "fabric-network": "^2.2.19",
+        "form-data": "^4.0.0",
         "graphql": "^16.8.1",
         "graphql-tools": "^9.0.0",
         "jsonwebtoken": "^9.0.2",
