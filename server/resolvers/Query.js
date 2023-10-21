@@ -1,5 +1,4 @@
 const authController = require('../controllers/authController');
-const User = require('../models/User.js');
 const { GraphQLError } = require('graphql');
 const codeMap = require('./statusCodes');
 const fileController = require('../controllers/fileController');
@@ -19,7 +18,7 @@ exports.Query = {
         }
         return 'Hello protect is working';
     },
-    
+
     retrieveFile: async (parent, args, context) => {
         const response = await fileController.retrieveFile(
             context.req,

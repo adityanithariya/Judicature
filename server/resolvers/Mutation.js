@@ -1,4 +1,3 @@
-const User = require('../models/User.js');
 const authController = require('../controllers/authController');
 const fileController = require('../controllers/fileController');
 const { GraphQLError } = require('graphql');
@@ -50,8 +49,6 @@ exports.Mutation = {
                 },
             });
         }
-        return response.data.message;
+        return response.data;
     },
-
-    
 };

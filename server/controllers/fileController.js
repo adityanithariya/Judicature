@@ -4,21 +4,14 @@ const axios = require('axios');
 const FormData = require('form-data');
 
 exports.uploadFile = async (req, res) => {
-    const { base64String, extension } = req.body.variables.file;
-    if (!base64String || !extension) {
-        return {
-            status: 'fail',
-            message: 'Both base64String and extension are required.',
-            statusCode: 400,
-        };
-    }
+    const { base64String, extension, fileName: orgFileName } = req.body.variables.file;
     const buffer = Buffer.from(base64String, 'base64');
-    const filename = `file_${Date.now()}.${extension}`;
+    const fileName = `${orgFileName}_${Date.now()}.${extension}`;
     const folderName = path.join(__dirname, '../', 'temp');
     if (!fs.existsSync(folderName)) {
         fs.mkdirSync(folderName);
     }
-    const filePath = path.join(__dirname, '../', 'temp', filename);
+    const filePath = path.join(__dirname, '../', 'temp', fileName);
     fs.writeFile(filePath, buffer, (err) => {
         if (err) {
             return {
@@ -29,12 +22,15 @@ exports.uploadFile = async (req, res) => {
         }
     });
 
-    let data = await addDoc(filePath);
-    data = {
-        extension,
-        ...data,
-    };
+    const { Hash: CID } = await addDoc(filePath);
 
+    // TODO: Save extension & fileName to hyperledger
+    const data = {
+        extension,
+        fileName,
+        CID,
+    };
+    console.log(data);
     if (!data) {
         return {
             status: 'fail',
@@ -55,27 +51,31 @@ exports.uploadFile = async (req, res) => {
 
     return {
         status: 'success',
-        data: {
-            message: 'Document added successfully',
-        },
+        data: data,
         statusCode: 201,
     };
 };
 
 exports.retrieveFile = async (req, res) => {
-    const { CID, extension } = req.body.variables.file;
-    let data = await getDoc(CID);
+    const data = await getDoc(req.body.variables.cid);
     const base64String = data.toString('base64');
 
-    let fileData = {
-        base64String,
-        extension,
-    };
+    if (!data) {
+        return {
+            status: 'fail',
+            message: 'Error in retrieving file from IPFS',
+            statusCode: 400,
+        };
+    }
 
     return {
         status: 'success',
+        // TODO: Fetch extension & fileName from hyperledger
         data: {
-            ...fileData,
+            CID: req.body.variables.cid,
+            base64String,
+            extension: "txt",
+            fileName: "fileName",    
         },
         statusCode: 201,
     };
@@ -101,15 +101,11 @@ const addDoc = async (file) => {
 
 const getDoc = async (CID) => {
     try {
-        const res = await axios.get(
-            `${process.env.IPFS_GET_DOC_API}${CID}`,
-            {
-                responseType: 'arraybuffer',
-            }
-        );
+        const res = await axios.get(`${process.env.IPFS_GET_DOC_API}${CID}`, {
+            responseType: 'arraybuffer',
+        });
         return res.data;
     } catch (err) {
         console.log(err);
     }
 };
-
