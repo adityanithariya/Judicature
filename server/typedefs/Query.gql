@@ -1,4 +1,4 @@
 type Query {
-    users: String
-    retrieveFile(file: fileRetrieveData): fileData!
+    users: String!
+    retrieveFile(cid: String!): fileData!
 }

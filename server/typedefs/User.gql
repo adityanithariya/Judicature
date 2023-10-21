@@ -1,16 +1,13 @@
 type User {
-    id: ID!
     username: String!
 }
 
 input signUpUser {
-    name: String!
     username: String!
-    email: String!
     password: String!
 }
 
 input logInUser {
-    identity: String!
+    username: String!
     password: String!
 }

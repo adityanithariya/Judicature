@@ -9,10 +9,19 @@ const signToken = (id) => {
 };
 
 exports.signUp = async (req, res) => {
-    const userDetails = req.body.variables.user;
-    const newUser = await User.create({
-        username: userDetails.username,
-        password: userDetails.password,
+    const { username, password } = req.body.variables.user;
+    const user = await User.findOne({ username: username });
+    if (user) {
+        return {
+            status: 'fail',
+            message: 'Username already exists',
+            statusCode: 400,
+        };
+    }
+
+    const { username: newUsername } = await User.create({
+        username: username,
+        password: password,
     });
 
     const token = signToken(newUser._id);
@@ -20,28 +29,23 @@ exports.signUp = async (req, res) => {
     return {
         status: 'success',
         data: {
-            username: newUser.username,
+            username: newUsername,
         },
         statusCode: 201,
     };
 };
 
 exports.logIn = async (req, res) => {
-    const userDetails = req.body.variables.user;
-    if (!userDetails.identity || !userDetails.password) {
+    const { username, password } = req.body.variables.user;
+    if (!password) {
         return {
             status: 'fail',
             message: 'Please provide email and password',
             statusCode: 400,
         };
     }
-    const user = await User.findOne({ username: userDetails.identity }).select(
-        '+password'
-    );
-    if (
-        !user ||
-        !(await user.authenticate(userDetails.password, user.password))
-    ) {
+    const user = await User.findOne({ username: username }).select('+password');
+    if (!user || !(await user.authenticate(password, user.password))) {
         res.cookie('jwt', undefined, { httpOnly: false, secure: false });
         return {
             status: 'fail',
