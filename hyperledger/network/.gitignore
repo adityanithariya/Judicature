@@ -1,0 +1,7 @@
+organizations/ordererOrganizations/*
+organizations/peerOrganizations/*
+*.block
+*.tx
+*.log
+*.tar.gz
+./configtx.yaml

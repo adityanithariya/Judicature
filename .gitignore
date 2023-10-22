@@ -1,9 +1,7 @@
 bin/
 builders/
 
-.env
+*.env
 install-fabric.sh
 
 node_modules/
-
-config.env
