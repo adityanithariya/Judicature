@@ -19,12 +19,12 @@ exports.signUp = async (req, res) => {
         };
     }
 
-    const { username: newUsername } = await User.create({
+    const { username: newUsername, _id } = await User.create({
         username: username,
         password: password,
     });
 
-    const token = signToken(newUser._id);
+    const token = signToken(_id);
     res.cookie('jwt', token, { httpOnly: false, secure: false });
     return {
         status: 'success',

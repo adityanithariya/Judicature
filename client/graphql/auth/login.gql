@@ -1,0 +1,5 @@
+mutation LogIn($user: logInUser!) {
+    logIn(user: $user) {
+        username
+    }
+}
