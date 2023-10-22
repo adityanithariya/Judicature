@@ -5,6 +5,8 @@ chmod +x ./cryptogen/init.sh
 . cryptogen/init.sh
 
 COMMAND=$1
+JUD="--channel hcraj --profile HCRaj --org1 main.sci.gov.in SCIMSP 7051 --org2 hcraj.nic.in HCRajMSP 8051"
+GOVT="--channel raj --profile Raj --org1 india.gov.in CentralGovtMSP 9051 --org2 raj.gov.in RajGovtMSP 10051"
 
 createOrgs() {
     generateCryptoMaterial > /dev/null 2>&1 &
@@ -25,9 +27,9 @@ if [ "$COMMAND" = "up" ]; then
     echo ""
 
     cp ./config/configtx.yaml .
-    . createChannel.sh all -ch hcraj -p HCRaj -org1 main.sci.gov.in SCIMSP 7051 -org2 hcraj.nic.in HCRajMSP 8051 &
+    . createChannel.sh all $(echo $JUD) &
     pid1=$!
-    . createChannel.sh all -ch raj -p Raj -org1 india.gov.in CentralGovtMSP 9051 -org2 raj.gov.in RajGovtMSP 10051 &
+    . createChannel.sh all $(echo $GOVT) &
     pid2=$!
 
     wait $pid1
@@ -57,4 +59,9 @@ if [ "$COMMAND" = "up" ]; then
 elif [ "$COMMAND" = "down" ]; then
     docker-compose -f docker-compose.yaml down
     exit 0
+elif [ "$COMMAND" = "deployCC" ]; then
+    : ${CONTRACTS:="../contracts"}
+    : ${CONTRACT_CONFIG:="$CONTRACTS/config"}
+    . ./scripts/deployCC.sh --lang node --name $2 -v $3 --src $CONTRACTS --pvt-config $CONTRACT_CONFIG/raj.json $(echo $JUD)
+    # . ./scripts/deployCC.sh --lang node --name $2 -v $3 --src $CONTRACTS --pvt-config $CONTRACT_CONFIG/hcraj.json $(echo $GOVT)
 fi

@@ -247,7 +247,7 @@ services:
             - ORDERER_GENERAL_LOGLEVEL=info
             - CORE_PEER_LOCALMSPID=SCIMSP
 
-            - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=artifacts_test
+            - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=network_test
 
             - CORE_PEER_ID=peer0.main.sci.gov.in
             - CORE_PEER_ADDRESS=peer0.main.sci.gov.in:7051
@@ -290,7 +290,7 @@ services:
             - ORDERER_GENERAL_LOGLEVEL=info
             - CORE_PEER_LOCALMSPID=HCRajMSP
 
-            - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=artifacts_test
+            - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=network_test
 
             - CORE_PEER_ID=peer0.hcraj.nic.in
             - CORE_PEER_ADDRESS=peer0.hcraj.nic.in:8051
@@ -333,7 +333,7 @@ services:
             - ORDERER_GENERAL_LOGLEVEL=info
             - CORE_PEER_LOCALMSPID=CentralGovtMSP
 
-            - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=artifacts_test
+            - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=network_test
 
             - CORE_PEER_ID=peer0.india.gov.in
             - CORE_PEER_ADDRESS=peer0.india.gov.in:9051
@@ -376,7 +376,7 @@ services:
             - ORDERER_GENERAL_LOGLEVEL=info
             - CORE_PEER_LOCALMSPID=RajGovtMSP
 
-            - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=artifacts_test
+            - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=network_test
 
             - CORE_PEER_ID=peer0.raj.gov.in
             - CORE_PEER_ADDRESS=peer0.raj.gov.in:10051

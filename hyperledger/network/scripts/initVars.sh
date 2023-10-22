@@ -8,40 +8,44 @@ fi
 
 while [ "$#" -gt 0 ]; do
     case "$1" in
-        -org1)
+        --org1)
             export ORG1_DOMAIN=$2
             export ORG1_MSPID=$3
             export ORG1_PORT=$4
             shift 4
             ;;
-        -org2)
+        --org2)
             export ORG2_DOMAIN=$2
             export ORG2_MSPID=$3
             export ORG2_PORT=$4
             shift 4
             ;;
-        -ch)
+        --channel|-c)
             export CHANNEL_NAME=$2
             shift 2
             ;;
-        -p)
+        --profile|-p)
             export PROFILE=$2
             shift 2
             ;;
-        -lang)
+        --lang|-l)
             export CC_RUNTIME_LANGUAGE=$2
             shift 2
             ;;
-        -v)
+        --version|-v)
             export VERSION=$2
             shift 2
             ;;
-        -src)
+        --src|-s)
             export CC_SRC_PATH=$2
             shift 2
             ;;
-        -name)
-            export CC_SRC_PATH=$2
+        --name|-n)
+            export CC_NAME=$2
+            shift 2
+            ;;
+        --pvt-config)
+            export PRIVATE_DATA_CONFIG=$2
             shift 2
             ;;
     esac
@@ -74,11 +78,7 @@ export CORE_PEER_TLS_ENABLED=true
 export ORDERER_CA=${PWD}/organizations/ordererOrganizations/sci.gov.in/orderers/orderer.sci.gov.in/msp/tlscacerts/tlsca.sci.gov.in-cert.pem
 export PEER0_ORG1_CA=${PWD}/organizations/peerOrganizations/${ORG1_DOMAIN}/peers/peer0.${ORG1_DOMAIN}/tls/ca.crt
 export PEER0_ORG2_CA=${PWD}/organizations/peerOrganizations/${ORG2_DOMAIN}/peers/peer0.${ORG2_DOMAIN}/tls/ca.crt
-if [ "$COMMAND" = "cc" ]; then
-    export FABRIC_CFG_PATH=${PWD}/../config/
-else
-    export FABRIC_CFG_PATH=${PWD}/config/
-fi
+export FABRIC_CFG_PATH=${PWD}/config/
 
 setGlobalsForPeer0Org1(){
     export CORE_PEER_LOCALMSPID=$ORG1_MSPID

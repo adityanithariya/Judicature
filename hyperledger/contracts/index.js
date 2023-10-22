@@ -1,3 +1,5 @@
 'use strict';
 
-module.exports.MyChaincode = require('./lib/MyChaincode.js');
+const MyChaincode = require('./lib/MyChaincode.js');
+module.exports.MyChaincode = MyChaincode;
+module.exports.contracts = [MyChaincode];
