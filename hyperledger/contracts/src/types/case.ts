@@ -14,5 +14,8 @@ export class Case {
 
     @Property()
     public lawyers: string[];
+
+    @Property()
+    public docs: string[];
 }
 
