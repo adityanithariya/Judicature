@@ -5,8 +5,13 @@ chmod +x ./cryptogen/init.sh
 . cryptogen/init.sh
 
 COMMAND=$1
-JUD="--channel hcraj --profile HCRaj --org1 main.sci.gov.in SCIMSP 7051 --org2 hcraj.nic.in HCRajMSP 8051"
-GOVT="--channel raj --profile Raj --org1 india.gov.in CentralGovtMSP 9051 --org2 raj.gov.in RajGovtMSP 10051"
+JUD="--channel hcraj --profile HCRaj --org1 SCI main.sci.gov.in 7051 7054 --org2 HCRaj hcraj.nic.in 8051 8054"
+GOVT="--channel raj --profile Raj --org1 CentralGovt india.gov.in 9051 9054 --org2 RajGovt raj.gov.in 10051 10054"
+
+if [[ $2 == "prod" ]]; then
+    export PROD="prod"
+    shift 1
+fi
 
 createOrgs() {
     generateCryptoMaterial > /dev/null 2>&1 &
@@ -57,7 +62,7 @@ if [ "$COMMAND" = "up" ]; then
 
     exit 0
 elif [ "$COMMAND" = "down" ]; then
-    docker-compose -f docker-compose.yaml down
+    docker-compose -f docker-compose.yaml down --volumes --remove-orphans
     exit 0
 elif [ "$COMMAND" = "deployCC" ]; then
     : ${CONTRACTS:="../contracts"}

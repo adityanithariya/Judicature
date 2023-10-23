@@ -9,16 +9,20 @@ fi
 while [ "$#" -gt 0 ]; do
     case "$1" in
         --org1)
-            export ORG1_DOMAIN=$2
-            export ORG1_MSPID=$3
+            export ORG1=$2
+            export ORG1_DOMAIN=$3
+            export ORG1_MSPID="${2}MSP"
             export ORG1_PORT=$4
-            shift 4
+            export ORG1_CA_PORT=$5
+            shift 5
             ;;
         --org2)
-            export ORG2_DOMAIN=$2
-            export ORG2_MSPID=$3
+            export ORG2=$2
+            export ORG2_DOMAIN=$3
+            export ORG2_MSPID="${2}MSP"
             export ORG2_PORT=$4
-            shift 4
+            export ORG2_CA_PORT=$5
+            shift 5
             ;;
         --channel|-c)
             export CHANNEL_NAME=$2
@@ -85,6 +89,14 @@ setGlobalsForPeer0Org1(){
     export CORE_PEER_TLS_ROOTCERT_FILE=$PEER0_ORG1_CA
     export CORE_PEER_MSPCONFIGPATH=${PWD}/organizations/peerOrganizations/${ORG1_DOMAIN}/users/Admin@${ORG1_DOMAIN}/msp
     export CORE_PEER_ADDRESS=localhost:${ORG1_PORT}
+    if [[ $1 == true ]]; then
+        export ORG=$ORG1
+        export ORG_DOMAIN=$ORG1_DOMAIN
+        export ORG_PORT=$ORG1_PORT
+        export CA_PORT=${ORG1_CA_PORT}
+        export PEERPEM=${PWD}/organizations/peerOrganizations/${ORG1_DOMAIN}/tlsca/tlsca.${ORG1_DOMAIN}-cert.pem
+        export CAPEM=${PWD}/organizations/peerOrganizations/${ORG1_DOMAIN}/ca/ca.${ORG1_DOMAIN}-cert.pem
+    fi
 }
 
 setGlobalsForPeer0Org2(){
@@ -92,4 +104,12 @@ setGlobalsForPeer0Org2(){
     export CORE_PEER_TLS_ROOTCERT_FILE=$PEER0_ORG2_CA
     export CORE_PEER_MSPCONFIGPATH=${PWD}/organizations/peerOrganizations/${ORG2_DOMAIN}/users/Admin@${ORG2_DOMAIN}/msp
     export CORE_PEER_ADDRESS=localhost:${ORG2_PORT}
+    if [[ $1 == true ]]; then
+        export ORG=$ORG2
+        export ORG_DOMAIN=$ORG2_DOMAIN
+        export ORG_PORT=$ORG2_PORT
+        export CA_PORT=${ORG2_CA_PORT}
+        export PEERPEM=${PWD}/organizations/peerOrganizations/${ORG2_DOMAIN}/tlsca/tlsca.${ORG2_DOMAIN}-cert.pem
+        export CAPEM=${PWD}/organizations/peerOrganizations/${ORG2_DOMAIN}/ca/ca.${ORG2_DOMAIN}-cert.pem
+    fi
 }

@@ -4,7 +4,8 @@ generateCryptoMaterial() {
     : ${CRYPTOGEN_PATH:="organizations"}
 
     # Remove previous crypto material
-    rm -rf ./${CRYPTOGEN_PATH}
+    rm -rf ./${CRYPTOGEN_PATH}/peerOrganizations
+    rm -rf ./${CRYPTOGEN_PATH}/ordererOrganizations
 
     # eVault Orgs
     cryptogen generate --config=./cryptogen/evault/config-india.yaml --output=$CRYPTOGEN_PATH

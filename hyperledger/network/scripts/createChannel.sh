@@ -4,6 +4,7 @@ if [ $# -lt 1 -o $1 == "-h" ]; then
 fi
 
 . initVars.sh "$@"
+. utils.sh
 
 if [[ $COMMAND -eq "update" || $COMMAND -eq "all" ]]; then
     if [ -z "$PROFILE" ]; then
@@ -59,6 +60,14 @@ updateAnchorPeers(){
     echo "===================== Channel '$CHANNEL_NAME' anchor peers updated ===================== "
 }
 
+generateCCP() {
+    setGlobalsForPeer0Org1 true
+    create_ccp
+
+    setGlobalsForPeer0Org1 true
+    create_ccp
+}
+
 chmod +x ./init.sh
 . init.sh
 
@@ -69,6 +78,7 @@ elif [ "$COMMAND" == "join" ]; then
 elif [ "$COMMAND" == "update" ]; then
     updateAnchorPeers
 elif [ "$COMMAND" == "all" ]; then
+    generateCCP
     sleep 5
     createChannel
     sleep 10
