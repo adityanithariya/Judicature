@@ -4,6 +4,6 @@
 
 import { eVaultContract } from './eVault';
 
-export { eVaultContract  } from './eVault';
+export { eVaultContract } from './eVault';
 
 export const contracts: any[] = [eVaultContract];
