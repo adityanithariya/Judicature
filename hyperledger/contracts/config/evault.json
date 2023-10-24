@@ -1,0 +1,11 @@
+[
+    {
+        "name": "document",
+        "policy": "OR('<org1>.member', '<org1>.member')",
+        "requiredPeerCount": 1,
+        "maxPeerCount": 2,
+        "blockToLive": 1000000,
+        "memberOnlyRead": true,
+        "memberOnlyWrite": true
+    }
+]

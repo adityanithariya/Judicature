@@ -23,12 +23,23 @@ elif [ -z "$PRIVATE_DATA_CONFIG" ]; then
 fi
 
 preDeploy() {
+    jq --version > /dev/null 2>&1
+    if [ $? -ne 0 ]; then
+        echo -e "Missing Dependencies...\nPlease Install 'jq' using 'sudo apt install jq'"
+        echo
+        exit 1
+    fi
     echo -e "Installing dependencies..."
     pushd $CC_SRC_PATH
     yarn
     popd
     echo Finished installing dependencies
 }
+
+setGlobalsForPeer0Org2
+ORG2_ADDRESS=$CORE_PEER_ADDRESS
+setGlobalsForPeer0Org1
+ORG1_ADDRESS=$CORE_PEER_ADDRESS
 
 packageChaincode() {
     rm -rf ${CC_NAME}.tar.gz
@@ -59,9 +70,10 @@ installChaincode() {
 
 queryInstalled() {
     setGlobalsForPeer0Org1
-    peer lifecycle chaincode queryinstalled >&deploy.log
-    cat deploy.log
-    PACKAGE_ID=$(sed -n "/${CC_NAME}_${VERSION}/{s/^Package ID: //; s/, Label:.*$//; p;}" deploy.log)
+    peer lifecycle chaincode queryinstalled --output json >&package.log
+    # cat deploy.log
+    PACKAGE_ID=$(jq -r '.installed_chaincodes[0].package_id' package.log)
+    # PACKAGE_ID=$(sed -n "/${CC_NAME}_${VERSION}/{s/^Package ID: //; s/, Label:.*$//; p;}" deploy.log)
     echo PackageID is ${PACKAGE_ID}
     echo -e "===================== Query installed successful on peer0.org1 on channel =====================\n\n"
 }
@@ -71,8 +83,8 @@ approveForMyOrg1() {
 
     peer lifecycle chaincode approveformyorg -o localhost:7050 \
         --ordererTLSHostnameOverride orderer.sci.gov.in --tls \
-        --cafile $ORDERER_CA --channelID $CHANNEL_NAME --name ${CC_NAME} --version ${VERSION} \
-        --init-required --package-id ${PACKAGE_ID} \
+        --cafile $ORDERER_CA --channelID $CHANNEL_NAME --name ${CC_NAME} \
+        --version ${VERSION} --package-id ${PACKAGE_ID} \
         --sequence ${VERSION}
         # --collections-config $PRIVATE_DATA_CONFIG \
 
@@ -87,22 +99,13 @@ getBlock() {
         --cafile $ORDERER_CA
 }
 
-checkCommitReadyness() {
-    setGlobalsForPeer0Org1
-    peer lifecycle chaincode checkcommitreadiness \
-        --channelID $CHANNEL_NAME --name ${CC_NAME} --version ${VERSION} \
-        --sequence ${VERSION} --output json --init-required
-        # --collections-config $PRIVATE_DATA_CONFIG \
-    echo -e "===================== checking commit readyness from org 1 =====================\n\n"
-}
-
 approveForMyOrg2() {
     setGlobalsForPeer0Org2
 
     peer lifecycle chaincode approveformyorg -o localhost:7050 \
         --ordererTLSHostnameOverride orderer.sci.gov.in --tls $CORE_PEER_TLS_ENABLED \
         --cafile $ORDERER_CA --channelID $CHANNEL_NAME --name ${CC_NAME} \
-        --version ${VERSION} --init-required --package-id ${PACKAGE_ID} \
+        --version ${VERSION} --package-id ${PACKAGE_ID} \
         --sequence ${VERSION}
         # --collections-config $PRIVATE_DATA_CONFIG \
 
@@ -110,27 +113,20 @@ approveForMyOrg2() {
 }
 
 checkCommitReadyness() {
-
     setGlobalsForPeer0Org1
     peer lifecycle chaincode checkcommitreadiness --channelID $CHANNEL_NAME \
-        --peerAddresses $ORG1_ADDRESS --tlsRootCertFiles $PEER0_ORG1_CA \
-        --name ${CC_NAME} --version ${VERSION} --sequence ${VERSION} --output json --init-required
+        --name ${CC_NAME} --version ${VERSION} --sequence ${VERSION} --output json
         # --collections-config $PRIVATE_DATA_CONFIG \
     echo -e "===================== checking commit readyness from org 1 =====================\n\n"
 }
 
 commitChaincodeDefination() {
-    setGlobalsForPeer0Org2
-    ORG2_ADDRESS=$CORE_PEER_ADDRESS
-    setGlobalsForPeer0Org1
-    ORG1_ADDRESS=$CORE_PEER_ADDRESS
-
     peer lifecycle chaincode commit -o localhost:7050 --ordererTLSHostnameOverride orderer.sci.gov.in \
         --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA \
         --channelID $CHANNEL_NAME --name ${CC_NAME} \
         --peerAddresses $ORG1_ADDRESS --tlsRootCertFiles $PEER0_ORG1_CA \
         --peerAddresses $ORG2_ADDRESS --tlsRootCertFiles $PEER0_ORG2_CA \
-        --version ${VERSION} --sequence ${VERSION} --init-required
+        --version ${VERSION} --sequence ${VERSION} 
         # --collections-config $PRIVATE_DATA_CONFIG \
 }
 
@@ -139,69 +135,68 @@ queryCommitted() {
     peer lifecycle chaincode querycommitted --channelID $CHANNEL_NAME --name ${CC_NAME}
 }
 
-chaincodeInvokeInit() {
-    setGlobalsForPeer0Org1
-    ORG1_ADDRESS=$CORE_PEER_ADDRESS
+# chaincodeInvokeInit() {
+#     setGlobalsForPeer0Org1
+#     ORG1_ADDRESS=$CORE_PEER_ADDRESS
 
-    peer chaincode instantiate -o localhost:7050 \
-        --ordererTLSHostnameOverride orderer.sci.gov.in \
-        --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA \
-        -C $CHANNEL_NAME -n ${CC_NAME} \
-        --peerAddresses $ORG1_ADDRESS --tlsRootCertFiles $PEER0_ORG1_CA \
-        -v ${VERSION} -c '{"Args":[]}'
+#     peer chaincode instantiate -o localhost:7050 \
+#         --ordererTLSHostnameOverride orderer.sci.gov.in \
+#         --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA \
+#         -C $CHANNEL_NAME -n ${CC_NAME} \
+#         --peerAddresses $ORG1_ADDRESS --tlsRootCertFiles $PEER0_ORG1_CA \
+#         -v ${VERSION} -c '{"Args":[]}'
 
-    setGlobalsForPeer0Org2
-    ORG2_ADDRESS=$CORE_PEER_ADDRESS
+#     setGlobalsForPeer0Org2
+#     ORG2_ADDRESS=$CORE_PEER_ADDRESS
 
-    peer chaincode instantiate -o localhost:7050 \
-        --ordererTLSHostnameOverride orderer.sci.gov.in \
-        --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA \
-        -C $CHANNEL_NAME -n ${CC_NAME} \
-        --peerAddresses $ORG2_ADDRESS --tlsRootCertFiles $PEER0_ORG2_CA \
-        -v ${VERSION} -c '{"Args":[]}'
-    
-}
+#     peer chaincode instantiate -o localhost:7050 \
+#         --ordererTLSHostnameOverride orderer.sci.gov.in \
+#         --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA \
+#         -C $CHANNEL_NAME -n ${CC_NAME} \
+#         --peerAddresses $ORG2_ADDRESS --tlsRootCertFiles $PEER0_ORG2_CA \
+#         -v ${VERSION} -c '{"Args":[]}'
+# }
 
-chaincodeInvoke() {
-    setGlobalsForPeer0Org2
-    ORG2_ADDRESS=$CORE_PEER_ADDRESS
-    setGlobalsForPeer0Org1
-    ORG1_ADDRESS=$CORE_PEER_ADDRESS
+# chaincodeInvoke() {
+#     setGlobalsForPeer0Org2
+#     ORG2_ADDRESS=$CORE_PEER_ADDRESS
+#     setGlobalsForPeer0Org1
+#     ORG1_ADDRESS=$CORE_PEER_ADDRESS
 
-    ## Init ledger
-    peer chaincode invoke -o localhost:7050 --ordererTLSHostnameOverride orderer.sci.gov.in \
-    --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA -C $CHANNEL_NAME -n ${CC_NAME} \
-    --peerAddresses $ORG1_ADDRESS --tlsRootCertFiles $PEER0_ORG1_CA \
-    --peerAddresses $ORG2_ADDRESS --tlsRootCertFiles $PEER0_ORG2_CA  \
-    -c '{"function":"initLedger","Args":[]}'
+#     ## Init ledger
+#     peer chaincode invoke -o localhost:7050 --ordererTLSHostnameOverride orderer.sci.gov.in \
+#     --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA -C $CHANNEL_NAME -n ${CC_NAME} \
+#     --peerAddresses $ORG1_ADDRESS --tlsRootCertFiles $PEER0_ORG1_CA \
+#     -c '{"function": "DocExists", "Args":["123"]}'
+#     # --peerAddresses $ORG2_ADDRESS --tlsRootCertFiles $PEER0_ORG2_CA  \
 
-    ## Add private data
-    export CAR=$(echo -e "{\"key\":\"1111\", \"make\":\"Tesla\",\"model\":\"Tesla A1\",\"color\":\"White\",\"owner\":\"pavan\",\"price\":\"10000\"}" | base64 | tr -d \\n)
-    peer chaincode invoke -o localhost:7050 \
-        --ordererTLSHostnameOverride orderer.sci.gov.in \
-        --tls $CORE_PEER_TLS_ENABLED \
-        --cafile $ORDERER_CA \
-        -C $CHANNEL_NAME -n ${CC_NAME} \
-        --peerAddresses $ORG1_ADDRESS --tlsRootCertFiles $PEER0_ORG1_CA \
-        --peerAddresses $ORG2_ADDRESS --tlsRootCertFiles $PEER0_ORG2_CA \
-        -c '{"function": "CreateAsset", "Args":[]}' \
-        --transient "{\"car\":\"$CAR\"}"
-}
+#     ## Add private data
+#     # export CAR=$(echo -e "{\"key\":\"1111\", \"make\":\"Tesla\",\"model\":\"Tesla A1\",\"color\":\"White\",\"owner\":\"pavan\",\"price\":\"10000\"}" | base64 | tr -d \\n)
+#     # peer chaincode invoke -o localhost:7050 \
+#     #     --ordererTLSHostnameOverride orderer.sci.gov.in \
+#     #     --tls $CORE_PEER_TLS_ENABLED \
+#     #     --cafile $ORDERER_CA \
+#     #     -C $CHANNEL_NAME -n ${CC_NAME} \
+#     #     --peerAddresses $ORG1_ADDRESS --tlsRootCertFiles $PEER0_ORG1_CA \
+#     #     --peerAddresses $ORG2_ADDRESS --tlsRootCertFiles $PEER0_ORG2_CA \
+#     #     -c '{"function": "CreateAsset", "Args":[]}' \
+#     #     --transient "{\"car\":\"$CAR\"}"
+# }
 
-chaincodeQuery() {
-    setGlobalsForPeer0Org2
+# chaincodeQuery() {
+#     setGlobalsForPeer0Org2
 
-    # Query all cars
-    # peer chaincode query -C $CHANNEL_NAME -n ${CC_NAME} -c '{"Args":["queryAllCars"]}'
+#     # Query all cars
+#     # peer chaincode query -C $CHANNEL_NAME -n ${CC_NAME} -c '{"Args":["queryAllCars"]}'
 
-    # Query Car by Id
-    peer chaincode query -C $CHANNEL_NAME -n ${CC_NAME} -c '{"function": "queryCar","Args":["CAR0"]}'
-    #'{"Args":["GetSampleData","Key1"]}'
+#     # Query Car by Id
+#     peer chaincode query -C $CHANNEL_NAME -n ${CC_NAME} -c '{"function": "queryCar","Args":["CAR0"]}'
+#     #'{"Args":["GetSampleData","Key1"]}'
 
-    # Query Private Car by Id
-    # peer chaincode query -C $CHANNEL_NAME -n ${CC_NAME} -c '{"function": "readPrivateCar","Args":["1111"]}'
-    # peer chaincode query -C $CHANNEL_NAME -n ${CC_NAME} -c '{"function": "readCarPrivateDetails","Args":["1111"]}'
-}
+#     # Query Private Car by Id
+#     # peer chaincode query -C $CHANNEL_NAME -n ${CC_NAME} -c '{"function": "readPrivateCar","Args":["1111"]}'
+#     # peer chaincode query -C $CHANNEL_NAME -n ${CC_NAME} -c '{"function": "readCarPrivateDetails","Args":["1111"]}'
+# }
 
 # set -x
 preDeploy
@@ -214,7 +209,4 @@ approveForMyOrg2
 checkCommitReadyness
 commitChaincodeDefination
 queryCommitted
-# chaincodeInvoke
-# sleep 3
-# chaincodeQuery
 # set +x

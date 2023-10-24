@@ -2,12 +2,50 @@
     "name": "judicature",
     "version": "1.0.0",
     "description": "Administration of Justice",
-    "main": "index.js",
-    "repository": "https://github.com/adityanithariya/Judicature",
-    "author": "Aditya Soni (adityanithariya)",
+    "main": "dist/index.js",
+    "typings": "dist/index.d.ts",
+    "scripts": {
+        "lint": "tslint -c tslint.json 'src/**/*.ts'",
+        "pretest": "npm run lint",
+        "test": "nyc mocha -r ts-node/register src/**/*.spec.ts",
+        "start": "fabric-chaincode-node start",
+        "build": "tsc",
+        "build:watch": "tsc -w",
+        "prepublishOnly": "npm run build"
+    },
+    "engineStrict": true,
+    "author": "adityanithariya",
     "license": "MIT",
     "dependencies": {
         "fabric-contract-api": "^2.5.4",
-        "fabric-shim": "^2.5.4"
+        "fabric-shim": "^2.0.0",
+        "mkdirp": "^3.0.1"
+    },
+    "devDependencies": {
+        "@types/node": "^10.17.60",
+        "nyc": "^14.1.1",
+        "ts-node": "^7.0.1",
+        "tslint": "^5.11.0",
+        "typescript": "^3.1.6"
+    },
+    "nyc": {
+        "extension": [
+            ".ts",
+            ".tsx"
+        ],
+        "exclude": [
+            "coverage/**",
+            "dist/**"
+        ],
+        "reporter": [
+            "text-summary",
+            "html"
+        ],
+        "all": true,
+        "check-coverage": true,
+        "statements": 100,
+        "branches": 100,
+        "functions": 100,
+        "lines": 100
     }
 }
