@@ -1,13 +1,27 @@
 type User {
-    username: String!
+    email: String!
 }
 
 input signUpUser {
-    username: String!
+    email: String!
     password: String!
 }
 
 input logInUser {
-    username: String!
+    email: String!
     password: String!
+}
+
+input forgotPasswordUser {
+    email: String!
+}
+
+input resetPasswordUser {
+    resetToken: String!
+    password: String!
+}
+
+input updatePasswordUser {
+    currentPassword: String!
+    newPassword: String!
 }
