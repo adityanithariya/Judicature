@@ -5,8 +5,8 @@ chmod +x ./cryptogen/init.sh
 . cryptogen/init.sh
 
 COMMAND=$1
-JUD="--channel hcraj --profile HCRaj --org1 SCI main.sci.gov.in 7051 7054 --org2 HCRaj hcraj.nic.in 8051 8054"
-GOVT="--channel raj --profile Raj --org1 CentralGovt india.gov.in 9051 9054 --org2 RajGovt raj.gov.in 10051 10054"
+JUD="--channel hcraj --profile HCRaj --org1 SCI main.sci.gov.in 7051 sci 7054        --org2 HCRaj hcraj.nic.in 8051 hcraj 8054"
+GOVT="--channel raj  --profile Raj   --org1 CentralGovt india.gov.in 9051 india 9054 --org2 RajGovt raj.gov.in 10051 raj 10054"
 
 if [[ $2 == "prod" ]]; then
     export PROD="prod"
@@ -69,4 +69,17 @@ elif [ "$COMMAND" = "deployCC" ]; then
     : ${CONTRACT_CONFIG:="$CONTRACTS/config"}
     . ./scripts/deployCC.sh --lang node --name $2 -v $3 --src $CONTRACTS --pvt-config $CONTRACT_CONFIG/raj.json $(echo $JUD)
     # . ./scripts/deployCC.sh --lang node --name $2 -v $3 --src $CONTRACTS --pvt-config $CONTRACT_CONFIG/hcraj.json $(echo $GOVT)
+elif [ "$COMMAND" = "clean" ]; then
+    docker-compose -f docker-compose.yaml down --volumes --remove-orphans
+    docker volume prune -f
+    docker network prune -f
+    docker rmi $(docker images -q)
+    exit 0
+else
+    echo "Usage: ./network.sh [up|down|clean|deployCC]"
+    echo "./network.sh up [prod] - to start the network"
+    echo "./network.sh down - to stop the network"
+    echo "./network.sh clean - to clean the network"
+    echo "./network.sh deployCC [name] [version] - to deploy chaincode"
+    exit 1
 fi

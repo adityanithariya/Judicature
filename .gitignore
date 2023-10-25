@@ -6,4 +6,4 @@ install-fabric.sh
 
 node_modules/
 temp
-connection
+connection-profile
