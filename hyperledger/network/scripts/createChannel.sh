@@ -64,8 +64,13 @@ generateCCP() {
     setGlobalsForPeer0Org1 true
     create_ccp
 
-    setGlobalsForPeer0Org1 true
+    setGlobalsForPeer0Org2 true
     create_ccp
+
+    if [[ $PROD == "prod" ]]; then
+        [ -d "../../server/connection-profile" ] && rm -rf ../../server/connection-profile
+        cp -r ./connection-profile/json/ ../../server/connection-profile
+    fi
 }
 
 chmod +x ./init.sh
