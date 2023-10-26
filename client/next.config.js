@@ -1,4 +1,9 @@
 /** @type {import('next').NextConfig} */
+
+if (!process.env.GRAPHQL_ENDPOINT) {
+    throw new Error('GRAPHQL_ENDPOINT not found');
+}
+
 const nextConfig = {
     webpack: (config) => {
         config.module.rules.push({

@@ -1,5 +1,6 @@
 mutation Mutation($user: signUpUser!) {
     signUp(user: $user) {
-        username
+        email
     }
 }
+

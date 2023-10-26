@@ -1,6 +1,8 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
+import Link from 'next/link';
+
 import { useRouter } from 'next/navigation';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -60,7 +62,7 @@ const Auth = () => {
                 await signup({
                     variables: {
                         user: {
-                            username: email,
+                            email,
                             password,
                         },
                     },
@@ -71,15 +73,19 @@ const Auth = () => {
                 await login({
                     variables: {
                         user: {
-                            username: email,
+                            email,
                             password,
                         },
                     },
                 });
+                toast.success('Login succesfull');
+                console.log('login succesfull');
             }
             navigate.replace('/');
         } catch (error) {
             toast.error(loginError?.message || signupError?.message);
+            console.log(error);
+            console.log(error.message);
         }
     };
     return (
@@ -111,12 +117,14 @@ const Auth = () => {
 
                     {!isSignup && (
                         <button className="text-center block text-gray-500 text-sm font-medium hover:underline">
-                            Forgot Password?
+                            <Link href="auth/forgot-password">
+                                Forgot Password
+                            </Link>
                         </button>
                     )}
                     <div className="text-center text-gray-700 text-sm font-medium">
                         <p>
-                            {isSignup ? "Don't" : 'Already'} have an account?{' '}
+                            {!isSignup ? "Don't" : 'Already'} have an account?{' '}
                             <span
                                 onClick={() =>
                                     setIsSignup((loggedIn) => !loggedIn)

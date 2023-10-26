@@ -63,6 +63,7 @@ exports.logIn = async (req, res) => {
     }
     const token = signToken(user._id);
     req.user = user;
+    console.log(token);
     res.cookie('jwt', token, { httpOnly: false, secure: false });
 
     return {
@@ -127,8 +128,8 @@ exports.forgotPassword = async (req, res) => {
     await user.save();
 
     // 3)Send it to the user
-    const message = `Forgot your password? Reset your password with token: http://localhost:3000/${resetToken}, If not than ignore`;
-    
+    const message = `Forgot your password? Reset your password with token: http://localhost:3000/auth/forgot-password/${resetToken}, If not than ignore`;
+    console.log(message);
     try {
         await sendEmail({
             email: user.email,
