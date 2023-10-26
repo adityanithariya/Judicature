@@ -10,8 +10,11 @@ const signToken = (id) => {
 };
 
 exports.signUp = async (req, res) => {
-    const { email, password } = req.body.variables.user;
-    const user = await User.findOne({ email });
+    const { username, email, password } = req.body.variables.user;
+    let user = await User.findOne({ username });
+    if (!user) {
+        user = await User.findOne({ email });
+    }
     if (user) {
         return {
             status: 'fail',
@@ -20,7 +23,8 @@ exports.signUp = async (req, res) => {
         };
     }
 
-    const { email: newemail, _id } = await User.create({
+    const { username: newusername, _id } = await User.create({
+        username: username,
         email: email,
         password: password,
     });
@@ -30,14 +34,14 @@ exports.signUp = async (req, res) => {
     return {
         status: 'success',
         data: {
-            email: newemail,
+            username: newusername,
         },
         statusCode: 201,
     };
 };
 
 exports.logIn = async (req, res) => {
-    const { email, password } = req.body.variables.user;
+    const { identity, password } = req.body.variables.user;
     if (!password) {
         return {
             status: 'fail',
@@ -45,12 +49,15 @@ exports.logIn = async (req, res) => {
             statusCode: 400,
         };
     }
-    const user = await User.findOne({ email }).select('+password');
+    let user = await User.findOne({ username: identity }).select('+password');
+    if (!user) {
+        user = await User.findOne({ email: identity }).select('+password');
+    }
     if (!user || !(await user.authenticate(password, user.password))) {
         res.cookie('jwt', undefined, { httpOnly: false, secure: false });
         return {
             status: 'fail',
-            message: 'Incorrect email or password',
+            message: 'Incorrect credentials',
             statusCode: 400,
         };
     }
@@ -61,7 +68,7 @@ exports.logIn = async (req, res) => {
     return {
         status: 'success',
         data: {
-            email: user.email,
+            username: user.username,
         },
         statusCode: 200,
     };
@@ -101,10 +108,13 @@ exports.protect = async (req, res) => {
 };
 
 exports.forgotPassword = async (req, res) => {
-    const { email } = req.body.variables.user;
+    const { identity } = req.body.variables.user;
 
     // 1)Get user based on post email
-    const user = await User.findOne({ email });
+    let user = await User.findOne({ username: identity });
+    if (!user) {
+        user = await User.findOne({ email: identity });
+    }
     if (!user) {
         return {
             status: 'fail',
@@ -118,6 +128,7 @@ exports.forgotPassword = async (req, res) => {
 
     // 3)Send it to the user
     const message = `Forgot your password? Reset your password with token: http://localhost:3000/${resetToken}, If not than ignore`;
+    
     try {
         await sendEmail({
             email: user.email,
@@ -180,7 +191,6 @@ exports.resetPassword = async (req, res, next) => {
 exports.updatePassword = async (req, res, next) => {
     const { currentPassword, newPassword } = req.body.variables.user;
     //1) Get user from collection
-    console.log(req.user)
     const user = await User.findById(req.user.id).select('+password');
 
     //2)Check if entered current pass is correct
