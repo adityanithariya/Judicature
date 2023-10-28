@@ -1,0 +1,47 @@
+{
+    "name": "test-network",
+    "version": "1.0.0",
+    "client": {
+        "adminCredential": {
+            "id": "exploreradmin",
+            "password": "exploreradminpw"
+        },
+        "enableAuthentication": true,
+        "organization": "SCI",
+        "connection": {
+            "timeout": {
+                "peer": {
+                    "endorser": "300"
+                },
+                "orderer": "300"
+            }
+        }
+    },
+    "channels": {
+        "hcraj": {
+            "peers": {
+                "peer0.main.sci.gov.in": {}
+            }
+        }
+    },
+    "organizations": {
+        "SCI": {
+            "mspid": "SCIMSP",
+            "adminPrivateKey": {
+                "path": "/tmp/crypto/peerOrganizations/main.sci.gov.in/users/Admin@main.sci.gov.in/msp/keystore/priv_sk"
+            },
+            "peers": ["peer0.main.sci.gov.in"],
+            "signedCert": {
+                "path": "/tmp/crypto/peerOrganizations/main.sci.gov.in/users/Admin@main.sci.gov.in/msp/signcerts/Admin@main.sci.gov.in-cert.pem"
+            }
+        }
+    },
+    "peers": {
+        "peer0.main.sci.gov.in": {
+            "tlsCACerts": {
+                "path": "/tmp/crypto/peerOrganizations/main.sci.gov.in/peers/peer0.main.sci.gov.in/tls/ca.crt"
+            },
+            "url": "grpcs://peer0.main.sci.gov.in:7051"
+        }
+    }
+}

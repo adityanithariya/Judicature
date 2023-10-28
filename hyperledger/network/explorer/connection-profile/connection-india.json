@@ -1,0 +1,48 @@
+{
+    "name": "test-network",
+    "version": "1.0.0",
+    "client": {
+        "tlsEnable": true,
+        "adminCredential": {
+            "id": "exploreradmin",
+            "password": "exploreradminpw"
+        },
+        "enableAuthentication": true,
+        "organization": "CentralGovtMSP",
+        "connection": {
+            "timeout": {
+                "peer": {
+                    "endorser": "300"
+                },
+                "orderer": "300"
+            }
+        }
+    },
+    "channels": {
+        "hcraj": {
+            "peers": {
+                "peer0.india.gov.in": {}
+            }
+        }
+    },
+    "organizations": {
+        "CentralGovtMSP": {
+            "mspid": "CentralGovtMSP",
+            "adminPrivateKey": {
+                "path": "/tmp/crypto/peerOrganizations/india.gov.in/users/Admin@india.gov.in/msp/keystore/priv_sk"
+            },
+            "peers": ["peer0.india.gov.in"],
+            "signedCert": {
+                "path": "/tmp/crypto/peerOrganizations/india.gov.in/users/Admin@india.gov.in/msp/signcerts/Admin@india.gov.in-cert.pem"
+            }
+        }
+    },
+    "peers": {
+        "peer0.india.gov.in": {
+            "tlsCACerts": {
+                "path": "/tmp/crypto/peerOrganizations/india.gov.in/peers/peer0.india.gov.in/tls/ca.crt"
+            },
+            "url": "grpcs://peer0.india.gov.in:9051"
+        }
+    }
+}
