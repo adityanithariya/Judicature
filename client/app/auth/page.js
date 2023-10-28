@@ -20,7 +20,7 @@ const Auth = () => {
 
     const inputFields = [
         {
-            title: 'Name',
+            title: 'Username',
             icon: FaUser,
             signup: true,
         },
@@ -50,8 +50,7 @@ const Auth = () => {
         useMutation(SIGNUP);
 
     const onSubmit = async (data) => {
-        const { email, password, confirm_password } = data;
-
+        const { username, email, password, confirm_password } = data;
         try {
             if (isSignup) {
                 if (password !== confirm_password) {
@@ -62,8 +61,9 @@ const Auth = () => {
                 await signup({
                     variables: {
                         user: {
-                            email,
+                            username,
                             password,
+                            email,
                         },
                     },
                 });
@@ -142,4 +142,3 @@ const Auth = () => {
 };
 
 export default Auth;
-

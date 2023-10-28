@@ -1,6 +1,5 @@
 mutation LogIn($user: logInUser!) {
     logIn(user: $user) {
-        email
+        username
     }
 }
-
