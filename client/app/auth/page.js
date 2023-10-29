@@ -73,7 +73,7 @@ const Auth = () => {
                 await login({
                     variables: {
                         user: {
-                            email,
+                            identity: email,
                             password,
                         },
                     },
@@ -83,9 +83,9 @@ const Auth = () => {
             }
             navigate.replace('/');
         } catch (error) {
-            toast.error(loginError?.message || signupError?.message);
+            // toast.error(loginError?.message || signupError?.message);
             console.log(error);
-            console.log(error.message);
+            toast.error(error.message);
         }
     };
     return (
@@ -142,3 +142,4 @@ const Auth = () => {
 };
 
 export default Auth;
+
