@@ -36,6 +36,7 @@ exports.Mutation = {
 
     logIn: async (parent, args, context) => {
         const response = await authController.logIn(context.req, context.res);
+        console.log(response);
         if (response.status == 'fail') {
             throw new GraphQLError(response.message, {
                 extensions: {

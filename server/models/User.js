@@ -20,7 +20,7 @@ const userSchema = mongoose.Schema({
         select: false,
     },
     passwordChangedAt: {
-        Default: 0,
+        default: 0,
         type: Number,
     },
     passwordResetToken: {
@@ -28,7 +28,7 @@ const userSchema = mongoose.Schema({
         type: String,
     },
     passwordResetExpires: {
-        Default: 0,
+        default: 0,
         type: Number,
     },
     active: {
