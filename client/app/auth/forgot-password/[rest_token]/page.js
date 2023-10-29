@@ -19,7 +19,7 @@ const ResetTokenPage = ({ params, searchParams }) => {
 
     const onSubmit = async (data) => {
         const { rest_token: resetToken } = params;
-
+        const password = data.password;
         try {
             await forgotPassword({
                 variables: {
