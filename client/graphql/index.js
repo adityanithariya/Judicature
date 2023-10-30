@@ -1,4 +1,4 @@
-import { ApolloClient, InMemoryCache, from } from '@apollo/client';
+import { ApolloClient, InMemoryCache } from '@apollo/client';
 export { default as LOGIN } from './auth/login.gql';
 export { default as SIGNUP } from './auth/signup.gql';
 export { default as FORGOT_PASSWORD } from './auth/forgotpassword.gql';
