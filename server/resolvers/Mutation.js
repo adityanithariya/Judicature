@@ -3,7 +3,7 @@ const fileController = require('../controllers/fileController');
 const { GraphQLError } = require('graphql');
 const codeMap = require('./statusCodes');
 
-checkProtection = async (req, res) => {
+const checkProtection = async (req, res) => {
     const response = await authController.protect(req, res);
     if (response.status == 'fail') {
         throw new GraphQLError(response.message, {
