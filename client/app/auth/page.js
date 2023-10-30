@@ -116,11 +116,12 @@ const Auth = () => {
                     </Button>
 
                     {!isSignup && (
-                        <button className="text-center block text-gray-500 text-sm font-medium hover:underline">
-                            <Link href="auth/forgot-password">
-                                Forgot Password
-                            </Link>
-                        </button>
+                        <Link
+                            className="text-center block text-gray-500 text-sm font-medium hover:underline"
+                            href="auth/forgot-password"
+                        >
+                            Forgot Password
+                        </Link>
                     )}
                     <div className="text-center text-gray-700 text-sm font-medium">
                         <p>

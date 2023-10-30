@@ -11,14 +11,14 @@ import { toast } from 'react-toastify';
 
 import { useRouter } from 'next/navigation';
 
-const ResetTokenPage = ({ params, searchParams }) => {
+const ResetTokenPage = ({ params }) => {
     const { register, handleSubmit } = useForm();
 
     const [forgotPassword, { error, loading }] = useMutation(RESET_PASSWORD);
     const navigate = useRouter();
 
     const onSubmit = async (data) => {
-        const { rest_token: resetToken } = params;
+        const { reset_token: resetToken } = params;
         const password = data.password;
         try {
             await forgotPassword({
@@ -61,4 +61,3 @@ const ResetTokenPage = ({ params, searchParams }) => {
 };
 
 export default ResetTokenPage;
-
