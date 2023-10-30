@@ -1,5 +1,8 @@
 type Mutation {
     signUp(user: signUpUser!): User!
     logIn(user: logInUser!): User!
+    forgotPassword(user: forgotPasswordUser!): String!
+    resetPassword(user: resetPasswordUser!): String!
+    updatePassword(user: updatePasswordUser!): String!
     uploadFile(file: fileDataInput!): fileData!
 }

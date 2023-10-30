@@ -1,6 +1,7 @@
 const User = require('../models/User.js');
 const jwt = require('jsonwebtoken');
 const { promisify } = require('util');
+const sendEmail = require('../utils/email');
 
 const signToken = (id) => {
     return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -9,18 +10,22 @@ const signToken = (id) => {
 };
 
 exports.signUp = async (req, res) => {
-    const { username, password } = req.body.variables.user;
-    const user = await User.findOne({ username: username });
+    const { username, email, password } = req.body.variables.user;
+    let user = await User.findOne({ username });
+    if (!user) {
+        user = await User.findOne({ email });
+    }
     if (user) {
         return {
             status: 'fail',
-            message: 'Username already exists',
+            message: 'email already exists',
             statusCode: 400,
         };
     }
 
-    const { username: newUsername, _id } = await User.create({
+    const { username: newusername, _id } = await User.create({
         username: username,
+        email: email,
         password: password,
     });
 
@@ -29,14 +34,14 @@ exports.signUp = async (req, res) => {
     return {
         status: 'success',
         data: {
-            username: newUsername,
+            username: newusername,
         },
         statusCode: 201,
     };
 };
 
 exports.logIn = async (req, res) => {
-    const { username, password } = req.body.variables.user;
+    const { identity, password } = req.body.variables.user;
     if (!password) {
         return {
             status: 'fail',
@@ -44,17 +49,21 @@ exports.logIn = async (req, res) => {
             statusCode: 400,
         };
     }
-    const user = await User.findOne({ username: username }).select('+password');
+    let user = await User.findOne({ username: identity }).select('+password');
+    if (!user) {
+        user = await User.findOne({ email: identity }).select('+password');
+    }
     if (!user || !(await user.authenticate(password, user.password))) {
         res.cookie('jwt', undefined, { httpOnly: false, secure: false });
         return {
             status: 'fail',
-            message: 'Incorrect email and password',
+            message: 'Incorrect credentials',
             statusCode: 400,
         };
     }
     const token = signToken(user._id);
     req.user = user;
+    console.log(token);
     res.cookie('jwt', token, { httpOnly: false, secure: false });
 
     return {
@@ -71,7 +80,6 @@ exports.protect = async (req, res) => {
     if (req.headers.cookie) {
         token = req.headers.cookie.split('jwt=')[1];
     }
-
     if (!token) {
         return {
             status: 'fail',
@@ -93,18 +101,120 @@ exports.protect = async (req, res) => {
         };
     }
 
-    //4)Check if user changed password after jwt is issued
-    // if (currentUser.changedPasswordAfter(decoded.iat)) {
-    //   return {
-    //     status: "fail",
-    //     message: "Password Changed after token issued",
-    //     statusCode: 400,
-    //   };
-    // }
-
     req.user = currentUser;
     return {
         status: 'success',
+        statusCode: 200,
+    };
+};
+
+exports.forgotPassword = async (req, res) => {
+    const { identity } = req.body.variables.user;
+
+    // 1)Get user based on post email
+    let user = await User.findOne({ username: identity });
+    if (!user) {
+        user = await User.findOne({ email: identity });
+    }
+    if (!user) {
+        return {
+            status: 'fail',
+            message: `Email dosen't exists`,
+            statusCode: 400,
+        };
+    }
+    // 2)Generate random reset token
+    const resetToken = user.createPasswordResetToken();
+    await user.save();
+
+    // 3)Send it to the user
+    const message = `Forgot your password? Reset your password with token: http://localhost:3000/auth/forgot-password/${resetToken}, If not than ignore`;
+    console.log(message);
+    try {
+        await sendEmail({
+            email: user.email,
+            subject: 'Your password reset token is valid for 20mins',
+            message,
+        });
+        return {
+            status: 'success',
+            message: 'Token send to email',
+            statusCode: 200,
+        };
+    } catch (err) {
+        user.passwordResetToken = undefined;
+        user.passwordResetExpires = undefined;
+        await user.save({ validateBeforeSave: false });
+        return {
+            status: 'fail',
+            message: `There was error sending email try again later ${err}`,
+            statusCode: 400,
+        };
+    }
+};
+
+exports.resetPassword = async (req, res, next) => {
+    // 1)Get user based on user
+    const { resetToken, password } = req.body.variables.user;
+    const user = await User.findOne({
+        passwordResetToken: resetToken,
+        passwordResetExpires: { $gt: Date.now() },
+    });
+
+    // 2)If token as not expired and user is there than set new password
+    if (!user) {
+        return {
+            status: 'fail',
+            message: 'Token is invalid or expired',
+            statusCode: 400,
+        };
+    }
+
+    // 3)Update changed password porperty for user
+    user.password = password;
+    user.passwordResetToken = '';
+    user.passwordResetExpires = 0;
+    user.passwordChangedAt = Date.now();
+    await user.save();
+
+    // 4)Log the user and send jwt
+    const token = signToken(user._id);
+    req.user = user;
+    res.cookie('jwt', token, { httpOnly: false, secure: false });
+
+    return {
+        status: 'success',
+        message: 'Password has Changed',
+        statusCode: 200,
+    };
+};
+
+exports.updatePassword = async (req, res, next) => {
+    const { currentPassword, newPassword } = req.body.variables.user;
+    //1) Get user from collection
+    const user = await User.findById(req.user.id).select('+password');
+
+    //2)Check if entered current pass is correct
+    if (!(await user.correctPassword(currentPassword, user.password))) {
+        return {
+            status: 'fail',
+            message: 'Password entered is incorrect',
+            statusCode: 400,
+        };
+    }
+
+    //3)Update pass
+    user.password = newPassword;
+    user.passwordChangedAt = Date.now();
+    await user.save();
+
+    //4)sent jwt and logged in
+    const token = signToken(user._id);
+    res.cookie('jwt', token, { httpOnly: false, secure: false });
+
+    return {
+        status: 'success',
+        message: 'Password has Changed',
         statusCode: 200,
     };
 };
