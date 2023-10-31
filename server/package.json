@@ -6,6 +6,10 @@
     "repository": "https://github.com/adityanithariya/Judicature",
     "author": "Aditya Soni (adityanithariya)",
     "license": "MIT",
+    "engines": {
+        "node": ">=16.0.0",
+        "yarn": ">=1.22.0"
+    },
     "dependencies": {
         "@graphql-tools/load-files": "^7.0.0",
         "@graphql-tools/merge": "^9.0.0",

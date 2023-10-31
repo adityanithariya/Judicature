@@ -7,4 +7,7 @@ export { default as RESET_PASSWORD } from './auth/reset-password.gql';
 export const apolloClient = new ApolloClient({
     uri: process.env.GRAPHQL_ENDPOINT,
     cache: new InMemoryCache(),
+    fetchOptions: {
+        mode: 'no-cors',
+    },
 });
