@@ -29,8 +29,7 @@ const ResetTokenPage = ({ params }) => {
                     },
                 },
             });
-            toast.success('password reset');
-
+            toast.success('Password Reset Successful!');
             navigate.replace('/auth');
         } catch (err) {
             console.log(err.message);
@@ -61,3 +60,4 @@ const ResetTokenPage = ({ params }) => {
 };
 
 export default ResetTokenPage;
+

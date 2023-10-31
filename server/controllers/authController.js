@@ -29,6 +29,17 @@ exports.signUp = async (req, res) => {
         password: password,
     });
 
+    const message = `Dear ${newusername},\nWelcome to Judicature!\n\nWe're thrilled to have you join our community. At Judicature, we understand the importance of securing and verifying your documents. That's why we've created a platform where you can safely store your documents and have them verified by the government with ease.\n\nGetting Started:\n1. Upload Your Documents: Start by uploading the documents you wish to secure and verify.\n2. Request Verification: Once uploaded, you can request government verification for your documents.\n3. Share & Access: After verification, you can share your documents with trusted individuals or access them anytime, anywhere.\nRemember, your trust is our top priority. We're committed to providing you with a seamless experience and ensuring the utmost security for your documents.\n\nIf you have any questions or need assistance, please don't hesitate to reach out to our support team at support@judicature.com.\n\nThank you for choosing Judicature. We look forward to serving you!\nWarm regards,\nThe Judicature Team`;
+    if (process.env.NODE_ENV == 'prod') {
+        await sendEmail({
+            email: email,
+            subject: 'Welcome to Judicature - Administration of Justice!',
+            message,
+        });
+    } else {
+        console.log(`user: ${newusername} created!`);
+    }
+
     const token = signToken(_id);
     res.cookie('jwt', token, { httpOnly: false, secure: false });
     return {
@@ -130,25 +141,34 @@ exports.forgotPassword = async (req, res) => {
     // 3)Send it to the user
     const message = `Forgot your password? Reset your password with token: http://localhost:3000/auth/forgot-password/${resetToken}, If not than ignore`;
     console.log(message);
-    try {
-        await sendEmail({
-            email: user.email,
-            subject: 'Your password reset token is valid for 20mins',
-            message,
-        });
+    if (process.env.NODE_ENV == 'prod') {
+        try {
+            await sendEmail({
+                email: user.email,
+                subject: 'Your password reset token is valid for 20mins',
+                message,
+            });
+            return {
+                status: 'success',
+                message: 'Token send to email',
+                statusCode: 200,
+            };
+        } catch (err) {
+            user.passwordResetToken = undefined;
+            user.passwordResetExpires = undefined;
+            await user.save({ validateBeforeSave: false });
+            return {
+                status: 'fail',
+                message: `There was error sending email try again later ${err}`,
+                statusCode: 400,
+            };
+        }
+    } else {
+        console.log(message);
         return {
             status: 'success',
             message: 'Token send to email',
             statusCode: 200,
-        };
-    } catch (err) {
-        user.passwordResetToken = undefined;
-        user.passwordResetExpires = undefined;
-        await user.save({ validateBeforeSave: false });
-        return {
-            status: 'fail',
-            message: `There was error sending email try again later ${err}`,
-            statusCode: 400,
         };
     }
 };
