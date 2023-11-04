@@ -1,6 +1,8 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
+import Link from 'next/link';
+
 import { useRouter } from 'next/navigation';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -18,7 +20,7 @@ const Auth = () => {
 
     const inputFields = [
         {
-            title: 'Name',
+            title: 'Username',
             icon: FaUser,
             signup: true,
         },
@@ -48,8 +50,7 @@ const Auth = () => {
         useMutation(SIGNUP);
 
     const onSubmit = async (data) => {
-        const { email, password, confirm_password } = data;
-
+        const { username, email, password, confirm_password } = data;
         try {
             if (isSignup) {
                 if (password !== confirm_password) {
@@ -60,8 +61,9 @@ const Auth = () => {
                 await signup({
                     variables: {
                         user: {
-                            username: email,
+                            username,
                             password,
+                            email,
                         },
                     },
                 });
@@ -71,15 +73,19 @@ const Auth = () => {
                 await login({
                     variables: {
                         user: {
-                            username: email,
+                            identity: email,
                             password,
                         },
                     },
                 });
+                toast.success('Login succesfull');
+                console.log('login succesfull');
             }
             navigate.replace('/');
         } catch (error) {
-            toast.error(loginError?.message || signupError?.message);
+            // toast.error(loginError?.message || signupError?.message);
+            console.log(error);
+            toast.error(error.message);
         }
     };
     return (
@@ -110,13 +116,16 @@ const Auth = () => {
                     </Button>
 
                     {!isSignup && (
-                        <button className="text-center block text-gray-500 text-sm font-medium hover:underline">
-                            Forgot Password?
-                        </button>
+                        <Link
+                            className="text-center block text-gray-500 text-sm font-medium hover:underline"
+                            href="auth/forgot-password"
+                        >
+                            Forgot Password
+                        </Link>
                     )}
                     <div className="text-center text-gray-700 text-sm font-medium">
                         <p>
-                            {isSignup ? "Don't" : 'Already'} have an account?{' '}
+                            {!isSignup ? "Don't" : 'Already'} have an account?{' '}
                             <span
                                 onClick={() =>
                                     setIsSignup((loggedIn) => !loggedIn)
