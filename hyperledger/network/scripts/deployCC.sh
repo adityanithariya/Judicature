@@ -23,15 +23,16 @@ elif [ -z "$PRIVATE_DATA_CONFIG" ]; then
 fi
 
 preDeploy() {
-    jq --version > /dev/null 2>&1
-    if [ $? -ne 0 ]; then
-        echo -e "Missing Dependencies...\nPlease Install 'jq' using 'sudo apt install jq'"
-        echo
-        exit 1
-    fi
+    # jq --version > /dev/null 2>&1
+    # if [ $? -ne 0 ]; then
+    #     echo -e "Missing Dependencies...\nPlease Install 'jq' using 'sudo apt install jq'"
+    #     echo
+    #     exit 1
+    # fi
     echo -e "Installing dependencies..."
     pushd $CC_SRC_PATH
     yarn
+    yarn build
     popd
     echo Finished installing dependencies
 }
@@ -132,6 +133,8 @@ commitChaincodeDefination() {
 
 queryCommitted() {
     setGlobalsForPeer0Org1
+    peer lifecycle chaincode querycommitted --channelID $CHANNEL_NAME --name ${CC_NAME}
+    setGlobalsForPeer0Org2
     peer lifecycle chaincode querycommitted --channelID $CHANNEL_NAME --name ${CC_NAME}
 }
 

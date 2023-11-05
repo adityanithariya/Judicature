@@ -1,9 +1,10 @@
-exports.registerAndEnrollUser = async (
+const adminUserId = process.env.ADMIN_ID || 'admin';
+
+const registerAndEnrollUser = async (
     caClient,
     wallet,
     orgMspId,
-    userId,
-    affiliation
+    userId
 ) => {
     try {
         // Check to see if we've already enrolled the user
@@ -34,7 +35,6 @@ exports.registerAndEnrollUser = async (
         // if affiliation is specified by client, the affiliation value must be configured in CA
         const secret = await caClient.register(
             {
-                affiliation: affiliation,
                 enrollmentID: userId,
                 role: 'client',
             },
@@ -60,3 +60,5 @@ exports.registerAndEnrollUser = async (
         console.error(`Failed to register user: ${error}`);
     }
 };
+
+module.exports = registerAndEnrollUser;

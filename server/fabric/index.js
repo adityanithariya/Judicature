@@ -6,6 +6,8 @@ const buildWallet = require('../utils/buildWallet');
 const buildCAClient = require('../utils/buildCAClient');
 const enrollAdmin = require('../utils/enrollAdmin');
 const path = require('path');
+const Org = require('../models/Organization');
+const registerAndEnrollUser = require('../utils/registerUser');
 
 const connect = async (org, orgURL) => {
     const ccp = buildCCP(org);
@@ -48,7 +50,35 @@ const getFabric = async (org, orgURL, username, channel, chaincode) => {
     // }
 };
 
+const connectFabric = async () => {
+    const orgs = await Org.find({});
+    for (const org of orgs) {
+        await connect(org.msp, org.orgUrl);
+    }
+};
+
+const executeTransaction = async () => {
+    const { wallet, caClient } = await getFabric(
+        'RajGovt',
+        'raj.gov.in',
+        'abcd',
+        'raj'
+    );
+    await registerAndEnrollUser(caClient, wallet, 'RajGovtMSP', 'abcd', 'user');
+    const { contract, gateway } = await getFabric(
+        'RajGovt',
+        'raj.gov.in',
+        'abcd',
+        'raj',
+        'evaultcontract'
+    );
+    console.log("Executing transaction 'InitLedger'...");
+    console.log((await contract.evaluateTransaction('InitLedger')).toString());
+    await gateway.disconnect();
+};
+
 module.exports = {
-    connect,
+    connectFabric,
     getFabric,
+    executeTransaction,
 };

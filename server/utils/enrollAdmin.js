@@ -1,5 +1,5 @@
-adminUserId = process.env.ADMIN_ID || 'admin';
-adminUserPasswd = process.env.ADMIN_PASSWORD || 'adminpw';
+const adminUserId = process.env.ADMIN_ID || 'admin';
+const adminUserPasswd = process.env.ADMIN_PASSWORD || 'adminpw';
 
 module.exports = async (caClient, wallet, orgMspId) => {
     try {
@@ -20,7 +20,7 @@ module.exports = async (caClient, wallet, orgMspId) => {
                 certificate: enrollment.certificate,
                 privateKey: enrollment.key.toBytes(),
             },
-            mspId: orgMspId,
+            mspId: `${orgMspId}MSP`,
             type: 'X.509',
         };
         await wallet.put(adminUserId, x509Identity);

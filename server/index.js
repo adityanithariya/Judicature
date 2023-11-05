@@ -3,7 +3,7 @@ const { loadFilesSync } = require('@graphql-tools/load-files');
 const { mergeTypeDefs, mergeResolvers } = require('@graphql-tools/merge');
 const path = require('path');
 const { connect } = require('./app');
-const { connect: connectFabric } = require('./fabric');
+const { connectFabric, executeTransaction } = require('./fabric');
 
 const typeDefsArray = loadFilesSync(path.join(__dirname, './**/*.gql'));
 const typeDefs = mergeTypeDefs(typeDefsArray);
@@ -25,7 +25,10 @@ const server = new ApolloServer({
 });
 
 connect();
-connectFabric("raj", "raj.gov.in");
+(async () => {
+    await connectFabric();
+    await executeTransaction();
+})();
 
 const port = process.env.PORT || 4000;
 server.listen(port, () => {

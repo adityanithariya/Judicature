@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
+const { Category } = require('./Organization');
 
 const userSchema = mongoose.Schema({
     username: {
@@ -30,6 +31,14 @@ const userSchema = mongoose.Schema({
     passwordResetExpires: {
         default: 0,
         type: Number,
+    },
+    org: {
+        type: Object,
+        default: null,
+    },
+    category: {
+        type: String,
+        enum: Object.values(Category),
     },
     active: {
         type: Boolean,

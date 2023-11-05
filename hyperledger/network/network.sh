@@ -11,20 +11,23 @@ GOVT="--channel raj  --profile Raj   --org1 CentralGovt india.gov.in 9051 9054 -
 if [[ $2 == "prod" ]]; then
     export PROD="prod"
     shift 1
+elif [[ $1 == "test" ]]; then
+    export PROD="prod"
 fi
 
 createOrgs() {
-    generateCryptoMaterial > /dev/null 2>&1 &
+    generateCryptoMaterial ] /dev/null 2]&1 &
     loadingPID $! "Generating crypto material"
-    generateGenesisBlock > /dev/null 2>&1 &
+    generateGenesisBlock ] /dev/null 2]&1 &
     loadingPID $! "Generating genesis block"
     echo -e "\nOrgs created\n"
 }
 
-if [ "$COMMAND" = "up" ]; then
+networkUp() {
     createOrgs
     echo "Stopping existing containers..."
     docker-compose -f docker-compose.yaml down
+    [ -d "../../server/wallet" ] && rm -rf ../../server/wallet
     echo ""
     echo "Starting network"
     docker-compose -f docker-compose.yaml up -d
@@ -45,40 +48,61 @@ if [ "$COMMAND" = "up" ]; then
     # while true; do
     #     loading "Creating channels"
 
-    #     if ! ps -p $pid1 > /dev/null && ! ps -p $pid2 > /dev/null; then
+    #     if ! ps -p $pid1 ] /dev/null && ! ps -p $pid2 ] /dev/null; then
     #         break
     #     fi
-    #     if ! ps -p $pid1 > /dev/null; then
+    #     if ! ps -p $pid1 ] /dev/null; then
     #         echo "Central & Raj Channel created"
     #         pid1=0
     #     fi
-    #     if ! ps -p $pid2 > /dev/null && [ "$p2" = true ]; then
+    #     if ! ps -p $pid2 ] /dev/null && [ "$p2" = true ]; then
     #         echo "SCI & HCRaj Channel created"
     #         pid2=0
     #     fi
     # done
 
     rm ./configtx.yaml
+}
 
+deployCC() {
+    if [ "$(node -v)" != "v16.4.0" ]; then
+        echo -e "Missing Dependencies...\nPlease install 'node v16.4.0'\nUse\nnvm install 16.4.0\nnvm use 16.4.0"
+        exit 1
+    fi
+    : ${CONTRACTS:="../contracts"}
+    : ${CONTRACT_CONFIG:="$CONTRACTS/config"}
+    . ./scripts/deployCC.sh --lang node --name $1 -v $2 --src $CONTRACTS --pvt-config $CONTRACT_CONFIG/raj.json $(echo $GOVT)
+    # . ./scripts/deployCC.sh --lang node --name $1 -v $2 --src $CONTRACTS --pvt-config $CONTRACT_CONFIG/hcraj.json $(echo $JUD)
+}
+
+if [ "$COMMAND" = "up" ]; then
+    networkUp
     exit 0
 elif [ "$COMMAND" = "down" ]; then
     docker-compose -f docker-compose.yaml down --volumes --remove-orphans
+    [ -d "../../server/wallet" ] && rm -rf ../../server/wallet
     exit 0
 elif [ "$COMMAND" = "deployCC" ]; then
-    : ${CONTRACTS:="../contracts"}
-    : ${CONTRACT_CONFIG:="$CONTRACTS/config"}
-    . ./scripts/deployCC.sh --lang node --name $2 -v $3 --src $CONTRACTS --pvt-config $CONTRACT_CONFIG/raj.json $(echo $JUD)
-    # . ./scripts/deployCC.sh --lang node --name $2 -v $3 --src $CONTRACTS --pvt-config $CONTRACT_CONFIG/hcraj.json $(echo $GOVT)
+    deployCC $2 $3
 elif [ "$COMMAND" = "clean" ]; then
     docker-compose -f docker-compose.yaml down --volumes --remove-orphans
     docker volume prune -f
     docker network prune -f
     exit 0
+elif [ "$COMMAND" = "test" ]; then
+    if [ "$(node -v)" != "v16.4.0" ]; then
+        echo -e "Missing Dependencies...\nPlease install 'node v16.4.0'\nUse\nnvm install 16.4.0\nnvm use 16.4.0"
+        exit 1
+    fi
+    networkUp
+    deployCC $2 $3
+    exit 0
 else
-    echo "Usage: ./network.sh [up|down|clean|deployCC]"
+    echo "Usage: ./network.sh [up|down|test|clean|deployCC]"
     echo "./network.sh up [prod] - to start the network"
     echo "./network.sh down - to stop the network"
     echo "./network.sh clean - to clean the network"
-    echo "./network.sh deployCC [name] [version] - to deploy chaincode"
+    echo "./network.sh deployCC [contract-name] [version] - to deploy chaincode"
+    echo "./network.sh test [contract-name] [version] - to start the network and deploy chaincode"
     exit 1
 fi

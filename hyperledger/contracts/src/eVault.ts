@@ -9,7 +9,13 @@ import {
     Returns,
     Transaction,
 } from 'fabric-contract-api';
-import { Document } from './types/document';
+
+type Document = {
+    owner: string;
+    cid: string;
+    extention: string;
+    fileName: string;
+};
 
 @Info({
     title: 'eVault',
@@ -21,117 +27,118 @@ export class eVaultContract extends Contract {
     }
 
     @Transaction(false)
-    public async InitLedger(ctx: Context): Promise<void> {
-        console.log('InitLedger Called');
+    @Returns('string')
+    public async InitLedger(ctx: Context): Promise<string> {
+        return 'InitLedger Called';
     }
 
-    @Transaction(false)
-    public async GetAllDocs(
-        { stub }: { stub: ChaincodeStub },
-        {
-            owner,
-            extention,
-        }: {
-            owner?: string;
-            extention?: string;
-        }
-    ): Promise<Document[]> {
-        const queryString = {
-            selector: {
-                owner,
-                extention,
-            },
-        };
-        const queryResults = await stub.getQueryResultWithPagination(
-            JSON.stringify(queryString),
-            20
-        );
-        return await this.GetAllResults(queryResults);
-    }
+    // @Transaction(false)
+    // public async GetAllDocs(
+    //     { stub }: { stub: ChaincodeStub },
+    //     {
+    //         owner,
+    //         extention,
+    //     }: {
+    //         owner?: string;
+    //         extention?: string;
+    //     }
+    // ): Promise<Document[]> {
+    //     const queryString = {
+    //         selector: {
+    //             owner,
+    //             extention,
+    //         },
+    //     };
+    //     const queryResults = await stub.getQueryResultWithPagination(
+    //         JSON.stringify(queryString),
+    //         20
+    //     );
+    //     return await this.GetAllResults(queryResults);
+    // }
 
-    @Transaction()
-    public async CreateDoc(
-        { stub }: { stub: ChaincodeStub },
-        key: string,
-        cid: string,
-        owner: string,
-        extention: string,
-        fileName: string
-    ): Promise<void> {
-        const exists = await this.DocExists({ stub }, key);
-        if (exists) {
-            throw new Error(`Document with key: ${key}, already exists`);
-        }
-        const doc: Document = {
-            owner,
-            cid,
-            extention,
-            fileName,
-        };
-        stub.putState(key, Buffer.from(doc.toString()));
-    }
+    // @Transaction()
+    // public async CreateDoc(
+    //     { stub }: { stub: ChaincodeStub },
+    //     key: string,
+    //     cid: string,
+    //     owner: string,
+    //     extention: string,
+    //     fileName: string
+    // ): Promise<void> {
+    //     const exists = await this.DocExists({ stub }, key);
+    //     if (exists) {
+    //         throw new Error(`Document with key: ${key}, already exists`);
+    //     }
+    //     const doc: Document = {
+    //         owner,
+    //         cid,
+    //         extention,
+    //         fileName,
+    //     };
+    //     stub.putState(key, Buffer.from(doc.toString()));
+    // }
 
-    @Transaction(false)
-    public async GetDoc(
-        { stub }: { stub: ChaincodeStub },
-        key: string
-    ): Promise<Document | null> {
-        const dataBuffer = await stub.getState(key);
-        if (dataBuffer && dataBuffer.length > 0)
-            return JSON.parse(dataBuffer.toString()) as Document;
+    // @Transaction(false)
+    // public async GetDoc(
+    //     { stub }: { stub: ChaincodeStub },
+    //     key: string
+    // ): Promise<Document | null> {
+    //     const dataBuffer = await stub.getState(key);
+    //     if (dataBuffer && dataBuffer.length > 0)
+    //         return JSON.parse(dataBuffer.toString()) as Document;
 
-        return null;
-    }
+    //     return null;
+    // }
 
-    @Transaction()
-    public async UpdateDoc(
-        { stub }: { stub: ChaincodeStub },
-        key: string,
-        {
-            cid,
-            owner,
-            extention,
-            fileName,
-        }: {
-            cid?: string;
-            owner?: string;
-            extention?: string;
-            fileName?: string;
-        }
-    ): Promise<void> {
-        const doc: Document = await this.GetDoc({ stub }, key);
-        if (!doc) {
-            throw new Error(`Document with key: ${key}, does not exist`);
-        }
-        doc.owner = owner || doc.owner;
-        doc.cid = cid || doc.cid;
-        doc.extention = extention || doc.extention;
-        doc.fileName = fileName || doc.fileName;
+    // @Transaction()
+    // public async UpdateDoc(
+    //     { stub }: { stub: ChaincodeStub },
+    //     key: string,
+    //     {
+    //         cid,
+    //         owner,
+    //         extention,
+    //         fileName,
+    //     }: {
+    //         cid?: string;
+    //         owner?: string;
+    //         extention?: string;
+    //         fileName?: string;
+    //     }
+    // ): Promise<void> {
+    //     const doc: Document = await this.GetDoc({ stub }, key);
+    //     if (!doc) {
+    //         throw new Error(`Document with key: ${key}, does not exist`);
+    //     }
+    //     doc.owner = owner || doc.owner;
+    //     doc.cid = cid || doc.cid;
+    //     doc.extention = extention || doc.extention;
+    //     doc.fileName = fileName || doc.fileName;
 
-        stub.putState(key, Buffer.from(doc.toString()));
-    }
+    //     stub.putState(key, Buffer.from(doc.toString()));
+    // }
 
-    @Transaction()
-    public async DeleteDoc(
-        { stub }: { stub: ChaincodeStub },
-        key: string
-    ): Promise<void> {
-        const exists = await this.DocExists({ stub }, key);
-        if (!exists) {
-            throw new Error(`Document with key: ${key}, does not exist`);
-        }
-        stub.deleteState(key);
-    }
+    // @Transaction()
+    // public async DeleteDoc(
+    //     { stub }: { stub: ChaincodeStub },
+    //     key: string
+    // ): Promise<void> {
+    //     const exists = await this.DocExists({ stub }, key);
+    //     if (!exists) {
+    //         throw new Error(`Document with key: ${key}, does not exist`);
+    //     }
+    //     stub.deleteState(key);
+    // }
 
-    @Transaction(false)
-    @Returns('boolean')
-    public async DocExists(
-        { stub }: { stub: ChaincodeStub },
-        key: string
-    ): Promise<boolean> {
-        const doc = await stub.getState(key);
-        return doc && doc.length > 0;
-    }
+    // @Transaction(false)
+    // @Returns('boolean')
+    // public async DocExists(
+    //     { stub }: { stub: ChaincodeStub },
+    //     key: string
+    // ): Promise<boolean> {
+    //     const doc = await stub.getState(key);
+    //     return doc && doc.length > 0;
+    // }
 
     // public async getPrivateData(
     //     stub: ChaincodeStub,
@@ -145,12 +152,12 @@ export class eVaultContract extends Contract {
     //     return null;
     // }
 
-    @Transaction(false)
-    async GetAllResults(promiseOfIterator) {
-        const allResults = [];
-        for await (const res of promiseOfIterator) {
-            allResults.push(JSON.parse(res?.value?.toString()));
-        }
-        return allResults;
-    }
+    // @Transaction(false)
+    // async GetAllResults(promiseOfIterator) {
+    //     const allResults = [];
+    //     for await (const res of promiseOfIterator) {
+    //         allResults.push(JSON.parse(res?.value?.toString()));
+    //     }
+    //     return allResults;
+    // }
 }

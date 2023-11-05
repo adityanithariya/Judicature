@@ -11,7 +11,7 @@ function json_ccp {
         -e "s/\${CA_PORT}/$CA_PORT/" \
         -e "s#\${PEERPEM}#$PP#" \
         -e "s#\${CAPEM}#$CP#" \
-        organizations/ccp-template.json > ./connection-profile/json/connection-${CA_NAME}.json
+        organizations/ccp-template.json > ./connection-profile/json/connection-${ORG}.json
 }
 
 function yaml_ccp {
@@ -23,7 +23,7 @@ function yaml_ccp {
         -e "s/\${CA_PORT}/$CA_PORT/" \
         -e "s#\${PEERPEM}#$PP#" \
         -e "s#\${CAPEM}#$CP#" \
-        organizations/ccp-template.yaml | sed -e $'s/\\\\n/\\\n          /g' > ./connection-profile/yaml/connection-${CA_NAME}.yaml
+        organizations/ccp-template.yaml | sed -e $'s/\\\\n/\\\n          /g' > ./connection-profile/yaml/connection-${ORG}.yaml
 }
 
 function refresh_path() {
