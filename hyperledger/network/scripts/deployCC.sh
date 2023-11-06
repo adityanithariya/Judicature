@@ -23,12 +23,6 @@ elif [ -z "$PRIVATE_DATA_CONFIG" ]; then
 fi
 
 preDeploy() {
-    # jq --version > /dev/null 2>&1
-    # if [ $? -ne 0 ]; then
-    #     echo -e "Missing Dependencies...\nPlease Install 'jq' using 'sudo apt install jq'"
-    #     echo
-    #     exit 1
-    # fi
     echo -e "Installing dependencies..."
     pushd $CC_SRC_PATH
     yarn

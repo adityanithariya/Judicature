@@ -64,11 +64,27 @@ networkUp() {
     rm ./configtx.yaml
 }
 
-deployCC() {
+preReqs() {
     if [ "$(node -v)" != "v16.4.0" ]; then
         echo -e "Missing Dependencies...\nPlease install 'node v16.4.0'\nUse\nnvm install 16.4.0\nnvm use 16.4.0"
         exit 1
     fi
+    jq --version > /dev/null 2>&1
+    if [ $? -ne 0 ]; then
+        echo -e "Missing Dependencies...\nPlease Install 'jq' using 'sudo apt install jq'"
+        echo
+        exit 1
+    fi
+    yarn --version > /dev/null 2>&1
+    if [ $? -ne 0 ]; then
+        echo -e "Missing Dependencies...\nPlease Install 'yarn' using 'npm install -g yarn'"
+        echo
+        exit 1
+    fi
+}
+
+deployCC() {
+    preReqs
     : ${CONTRACTS:="../contracts"}
     : ${CONTRACT_CONFIG:="$CONTRACTS/config"}
     . ./scripts/deployCC.sh --lang node --name $1 -v $2 --src $CONTRACTS --pvt-config $CONTRACT_CONFIG/raj.json $(echo $GOVT)
@@ -90,10 +106,7 @@ elif [ "$COMMAND" = "clean" ]; then
     docker network prune -f
     exit 0
 elif [ "$COMMAND" = "test" ]; then
-    if [ "$(node -v)" != "v16.4.0" ]; then
-        echo -e "Missing Dependencies...\nPlease install 'node v16.4.0'\nUse\nnvm install 16.4.0\nnvm use 16.4.0"
-        exit 1
-    fi
+    preReqs
     networkUp
     sleep 5
     deployCC $2 $3

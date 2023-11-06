@@ -8,7 +8,7 @@
         "lint": "tslint -c tslint.json 'src/**/*.ts'",
         "pretest": "npm run lint",
         "test": "nyc mocha -r ts-node/register src/**/*.spec.ts",
-        "start": "tsc && fabric-chaincode-node start --peer.address localhost:11051 --chaincode-id-name mycc",
+        "start": "tsc && fabric-chaincode-node start --peer.address localhost:7051 --chaincode-id-name mycc",
         "build": "tsc",
         "build:watch": "tsc -w",
         "prepublishOnly": "npm run build"
