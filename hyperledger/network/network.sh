@@ -16,9 +16,9 @@ elif [[ $1 == "test" ]]; then
 fi
 
 createOrgs() {
-    generateCryptoMaterial ] /dev/null 2]&1 &
+    generateCryptoMaterial > /dev/null 2>&1 &
     loadingPID $! "Generating crypto material"
-    generateGenesisBlock ] /dev/null 2]&1 &
+    generateGenesisBlock > /dev/null 2>&1 &
     loadingPID $! "Generating genesis block"
     echo -e "\nOrgs created\n"
 }
@@ -48,14 +48,14 @@ networkUp() {
     # while true; do
     #     loading "Creating channels"
 
-    #     if ! ps -p $pid1 ] /dev/null && ! ps -p $pid2 ] /dev/null; then
+    #     if ! ps -p $pid1 > /dev/null && ! ps -p $pid2 > /dev/null; then
     #         break
     #     fi
-    #     if ! ps -p $pid1 ] /dev/null; then
+    #     if ! ps -p $pid1 > /dev/null; then
     #         echo "Central & Raj Channel created"
     #         pid1=0
     #     fi
-    #     if ! ps -p $pid2 ] /dev/null && [ "$p2" = true ]; then
+    #     if ! ps -p $pid2 > /dev/null && [ "$p2" = true ]; then
     #         echo "SCI & HCRaj Channel created"
     #         pid2=0
     #     fi
@@ -95,6 +95,7 @@ elif [ "$COMMAND" = "test" ]; then
         exit 1
     fi
     networkUp
+    sleep 5
     deployCC $2 $3
     exit 0
 else

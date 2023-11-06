@@ -8,7 +8,7 @@
         "lint": "tslint -c tslint.json 'src/**/*.ts'",
         "pretest": "npm run lint",
         "test": "nyc mocha -r ts-node/register src/**/*.spec.ts",
-        "start": "fabric-chaincode-node start",
+        "start": "tsc && fabric-chaincode-node start --peer.address localhost:11051 --chaincode-id-name mycc",
         "build": "tsc",
         "build:watch": "tsc -w",
         "prepublishOnly": "npm run build"
@@ -21,7 +21,8 @@
     "license": "MIT",
     "dependencies": {
         "fabric-contract-api": "2.4.0",
-        "fabric-shim": "2.4.0"
+        "fabric-shim": "2.4.0",
+        "json-stringify-deterministic": "^1.0.12"
     },
     "devDependencies": {
         "@types/node": "^20.8.10",
