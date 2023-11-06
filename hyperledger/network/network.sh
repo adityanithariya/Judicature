@@ -65,10 +65,6 @@ networkUp() {
 }
 
 preReqs() {
-    if [ "$(node -v)" != "v16.4.0" ]; then
-        echo -e "Missing Dependencies...\nPlease install 'node v16.4.0'\nUse\nnvm install 16.4.0\nnvm use 16.4.0"
-        exit 1
-    fi
     jq --version > /dev/null 2>&1
     if [ $? -ne 0 ]; then
         echo -e "Missing Dependencies...\nPlease Install 'jq' using 'sudo apt install jq'"

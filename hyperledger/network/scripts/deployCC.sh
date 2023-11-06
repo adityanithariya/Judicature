@@ -26,7 +26,6 @@ preDeploy() {
     echo -e "Installing dependencies..."
     pushd $CC_SRC_PATH
     yarn
-    yarn build
     popd
     echo Finished installing dependencies
 }
