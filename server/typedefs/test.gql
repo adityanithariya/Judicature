@@ -1,0 +1,6 @@
+input testInput {
+    isEvaluate: Int
+    functionName: String!
+    arr: [String]
+}
+

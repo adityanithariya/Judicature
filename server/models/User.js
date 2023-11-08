@@ -14,6 +14,30 @@ const userSchema = mongoose.Schema({
         unique: true,
         required: [true, 'Email is required'],
     },
+    firstName: {
+        type: String,
+        default: null,
+    },
+    lastName: {
+        type: String,
+        default: null,
+    },
+    phone: {
+        type: String,
+        default: null,
+    },
+    org: {
+        type: String,
+        default: null,
+    },
+    state: {
+        type: String,
+        default: null,
+    },
+    city: {
+        type: String,
+        default: null,
+    },
     password: {
         type: String,
         required: [true, 'Password is required'],
@@ -32,11 +56,7 @@ const userSchema = mongoose.Schema({
         default: 0,
         type: Number,
     },
-    org: {
-        type: Object,
-        default: null,
-    },
-    category: {
+    role: {
         type: String,
         enum: Object.values(Category),
     },
