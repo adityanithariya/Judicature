@@ -159,6 +159,6 @@ approveForMyOrg2
 checkCommitReadyness
 commitChaincodeDefination
 queryCommitted
-sleep 2
+sleep 10
 chaincodeInvokeInit
 # set +x
