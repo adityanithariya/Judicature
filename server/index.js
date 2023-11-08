@@ -27,7 +27,6 @@ const server = new ApolloServer({
 connect();
 (async () => {
     await connectFabric();
-    await executeTransaction();
 })();
 
 const port = process.env.PORT || 4000;

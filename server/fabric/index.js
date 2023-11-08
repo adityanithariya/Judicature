@@ -57,28 +57,27 @@ const connectFabric = async () => {
     }
 };
 
-const executeTransaction = async () => {
-    const { wallet, caClient } = await getFabric(
-        'RajGovt',
-        'raj.gov.in',
-        'abcd',
-        'raj'
-    );
-    await registerAndEnrollUser(caClient, wallet, 'RajGovtMSP', 'abcd', 'user');
-    const { contract, gateway } = await getFabric(
-        'RajGovt',
-        'raj.gov.in',
-        'abcd',
-        'raj',
-        'evaultcontract'
-    );
-    console.log("Executing transaction 'InitLedger'...");
-    console.log((await contract.evaluateTransaction('InitLedger')).toString());
-    await gateway.disconnect();
-};
+// const executeTransaction = async () => {
+//     const { wallet, caClient } = await getFabric(
+//         'RajGovt',
+//         'raj.gov.in',
+//         'abcd',
+//         'raj'
+//     );
+//     await registerAndEnrollUser(caClient, wallet, 'RajGovtMSP', 'abcd', 'user');
+//     const { contract, gateway } = await getFabric(
+//         'RajGovt',
+//         'raj.gov.in',
+//         'abcd',
+//         'raj',
+//         'evaultcontract'
+//     );
+//     console.log("Executing transaction 'InitLedger'...");
+//     console.log((await contract.evaluateTransaction('InitLedger')).toString());
+//     await gateway.disconnect();
+// };
 
 module.exports = {
     connectFabric,
     getFabric,
-    executeTransaction,
 };
