@@ -25,6 +25,7 @@ exports.test = async (req, res) => {
         org.channelName,
         user.role
     );
+    console.log(user.username);
     if (!contract) {
         await registerAndEnrollUser(
             caClient,
@@ -40,28 +41,29 @@ exports.test = async (req, res) => {
             user.role
         ));
     }
-    if (isEvaluate) {
-        const response = (
-            arr
-                ? await contract.evaluateTransaction(functionName, ...arr)
-                : await contract.evaluateTransaction(functionName)
-        ).toString();
-        console.log(response);
-        await gateway.disconnect();
-    } else {
-        const response = (
-            arr
-                ? await contract.evaluateTransaction(functionName, ...arr)
-                : await contract.evaluateTransaction(functionName)
-        ).toString();
-        console.log(response);
-        await gateway.disconnect();
+    let response;
+    try {
+        if (isEvaluate) {
+            response = (
+                await contract.evaluateTransaction(functionName, ...arr)
+            )?.toString();
+            console.log(response);
+            await gateway.disconnect();
+        } else {
+            response = (
+                await contract.submitTransaction(functionName, ...arr)
+            )?.toString();
+            console.log(response);
+            await gateway.disconnect();
+        }
+    } catch (error) {
+        response = error.message;
     }
 
     return {
+        data: response,
         status: 'success',
         message: 'Successful',
         statusCode: 200,
     };
 };
-

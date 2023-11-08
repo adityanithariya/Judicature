@@ -7,8 +7,8 @@
 'use strict';
 
 // Deterministic JSON.stringify()
-const stringify  = require('json-stringify-deterministic');
-const sortKeysRecursive  = require('sort-keys-recursive');
+const stringify = require('json-stringify-deterministic');
+const sortKeysRecursive = require('sort-keys-recursive');
 const { Contract } = require('fabric-contract-api');
 
 class EVaultContract extends Contract {
@@ -31,45 +31,54 @@ class EVaultContract extends Contract {
     }
 
     async CreateDoc(ctx, key, cid, owner, fileName, extention) {
-        const prevDoc = JSON.parse(await this.GetDoc(ctx, key));
+        const prevDoc = await this.DocExists(ctx, key);
         if (prevDoc)
             throw new Error(`Document with key: ${key}, already exists`);
-        const doc = {
-            cid,
-            owner,
-            fileName,
-            extention,
-        };
-        await ctx.stub.putState(
-            key,
-            Buffer.from(stringify(sortKeysRecursive(doc)))
+        const doc = stringify(
+            sortKeysRecursive({
+                cid,
+                owner,
+                fileName,
+                extention,
+            })
         );
+        await ctx.stub.putState(key, Buffer.from(doc));
+        return doc;
     }
 
-    async UpdateDoc(ctx, key, cid, owner, extention, fileName) {
+    async UpdateDoc(ctx, newDoc) {
         const doc = JSON.parse(await this.GetDoc(ctx, key));
+        newDoc = JSON.parse(newDoc);
 
-        doc.owner = owner || doc.owner;
-        doc.cid = cid || doc.cid;
-        doc.extention = extention || doc.extention;
-        doc.fileName = fileName || doc.fileName;
+        doc.owner = newDoc.owner || doc.owner;
+        doc.cid = newDoc.cid || doc.cid;
+        doc.extention = newDoc.extention || doc.extention;
+        doc.fileName = newDoc.fileName || doc.fileName;
 
         await ctx.stub.putState(
             key,
             Buffer.from(stringify(sortKeysRecursive(doc)))
         );
+        return stringify(sortKeysRecursive(doc));
     }
 
     async DeleteDoc(ctx, key) {
         await this.GetDoc(ctx, key);
         await ctx.stub.deleteState(key);
+        return 'Document Deleted Successfully';
+    }
+
+    async DocExists(ctx, key) {
+        const dataBuffer = await ctx.stub.getState(key);
+        if (dataBuffer && dataBuffer.length != 0) return true;
+        return false;
     }
 
     async GetDoc(ctx, key) {
         const dataBuffer = await ctx.stub.getState(key);
-        if (!(dataBuffer && dataBuffer.length > 0))
+        if (!(dataBuffer && dataBuffer.length != 0))
             throw new Error(`Document with key: ${key}, does not exist`);
-        return stringify(JSON.parse(dataBuffer.toString()));
+        return dataBuffer.toString();
     }
 
     // async getPrivateData(

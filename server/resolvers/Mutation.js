@@ -141,7 +141,7 @@ exports.Mutation = {
                 },
             });
         }
-        return response.message;
+        return response.data;
     },
 
 };
