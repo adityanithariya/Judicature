@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
 
 const Category = {
-    eVault: 'evault',
-    forum: 'forum',
+    eVault: 'evaultcontract',
+    forum: 'forumcontract',
 };
 
 const orgSchema = mongoose.Schema({

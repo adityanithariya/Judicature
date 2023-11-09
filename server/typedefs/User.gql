@@ -6,6 +6,7 @@ input signUpUser {
     username: String!
     email: String!
     password: String!
+    role: String!
 }
 
 input logInUser {
@@ -25,4 +26,12 @@ input resetPasswordUser {
 input updatePasswordUser {
     currentPassword: String!
     newPassword: String!
+}
+
+input profileDataInput {
+    firstName: String!
+    lastName: String!
+    phone: String!
+    state: String!
+    city: String!
 }

@@ -1,10 +1,18 @@
 const fs = require('fs');
 const path = require('path');
 const axios = require('axios');
+const User = require('../models/User.js');
+const Org = require('../models/Organization.js');
 const FormData = require('form-data');
+const { getFabric } = require('../fabric/index.js');
+const registerAndEnrollUser = require('../utils/registerUser');
 
 exports.uploadFile = async (req, res) => {
-    const { base64String, extension, fileName: orgFileName } = req.body.variables.file;
+    const {
+        base64String,
+        extension,
+        fileName: orgFileName,
+    } = req.body.variables.file;
     const buffer = Buffer.from(base64String, 'base64');
     const fileName = `${orgFileName}_${Date.now()}.${extension}`;
     const folderName = path.join(__dirname, '../', 'temp');
@@ -24,13 +32,11 @@ exports.uploadFile = async (req, res) => {
 
     const { Hash: CID } = await addDoc(filePath);
 
-    // TODO: Save extension & fileName to hyperledger
     const data = {
         extension,
         fileName,
         CID,
     };
-    console.log(data);
     if (!data) {
         return {
             status: 'fail',
@@ -47,19 +53,74 @@ exports.uploadFile = async (req, res) => {
         });
     });
 
-    //TODO: data sent to hyperledger using fabric SDK
+    const key = `${CID}_${process.env.JWT_SECRET}`;
+
+    console.log('CID', CID);
+    console.log('key', key);
+
+    let user = await User.findOne({ _id: req.user.id });
+    const org = await Org.findOne({ orgName: state });
+
+    let { wallet, caClient, contract, gateway } = await getFabric(
+        org.msp,
+        org.orgUrl,
+        user.username,
+        org.channelName,
+        user.role
+    );
+    if (!contract) {
+        await registerAndEnrollUser(
+            caClient,
+            wallet,
+            `${org.msp}MSP`,
+            user.username
+        );
+        let {} = ({ contract, gateway } = await getFabric(
+            org.msp,
+            org.orgUrl,
+            user.username,
+            org.channelName,
+            user.role
+        ));
+    }
+    console.log(key, CID, user.username, fileName, extension);
+    const response = await contract.submitTransaction(
+        'CreateDoc',
+        key,
+        CID,
+        user.username,
+        fileName,
+        extension
+    );
+    console.log(response.toString());
 
     return {
         status: 'success',
-        data: data,
+        data: key,
         statusCode: 201,
     };
 };
 
 exports.retrieveFile = async (req, res) => {
-    const data = await getDoc(req.body.variables.cid);
-    const base64String = data.toString('base64');
+    let user = await User.findOne({ _id: req.user.id });
+    const org = await Org.findOne({ orgName: state });
+    let { contract } = await getFabric(
+        org.msp,
+        org.orgUrl,
+        user.username,
+        org.channelName,
+        user.role
+    );
+    if (!contract) {
+        console.log('User is not enrolled');
+    }
+    const response = await contract.evaluateTransaction(
+        'GetDoc',
+        req.body.variables.key
+    );
+    const responseData = JSON.parse(response);
 
+    const data = await getDoc(responseData.cid);
     if (!data) {
         return {
             status: 'fail',
@@ -70,12 +131,10 @@ exports.retrieveFile = async (req, res) => {
 
     return {
         status: 'success',
-        // TODO: Fetch extension & fileName from hyperledger
         data: {
-            CID: req.body.variables.cid,
-            base64String,
-            extension: "txt",
-            fileName: "fileName",    
+            base64String: data.toString('base64'),
+            extension: responseData.extention,
+            fileName: responseData.fileName,
         },
         statusCode: 201,
     };
