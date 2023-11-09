@@ -26,7 +26,7 @@ peers:
 certificateAuthorities:
     ca.${ORG_DOMAIN}:
         url: https://localhost:${CA_PORT}
-        caName: ca-${CA_NAME}
+        caName: ca.${ORG_DOMAIN}
         tlsCACerts:
             pem:
                 - |

@@ -13,18 +13,16 @@ while [ "$#" -gt 0 ]; do
             export ORG1_DOMAIN=$3
             export ORG1_MSPID="${2}MSP"
             export ORG1_PORT=$4
-            export ORG1_CANAME=$5
-            export ORG1_CA_PORT=$6
-            shift 6
+            export ORG1_CA_PORT=$5
+            shift 5
             ;;
         --org2)
             export ORG2=$2
             export ORG2_DOMAIN=$3
             export ORG2_MSPID="${2}MSP"
             export ORG2_PORT=$4
-            export ORG2_CANAME=$5
-            export ORG2_CA_PORT=$6
-            shift 6
+            export ORG2_CA_PORT=$5
+            shift 5
             ;;
         --channel|-c)
             export CHANNEL_NAME=$2
@@ -95,7 +93,6 @@ setGlobalsForPeer0Org1(){
         export ORG=$ORG1
         export ORG_DOMAIN=$ORG1_DOMAIN
         export ORG_PORT=$ORG1_PORT
-        export CA_NAME=${ORG1_CANAME}
         export CA_PORT=${ORG1_CA_PORT}
         export PEERPEM=${PWD}/organizations/peerOrganizations/${ORG1_DOMAIN}/tlsca/tlsca.${ORG1_DOMAIN}-cert.pem
         export CAPEM=${PWD}/organizations/peerOrganizations/${ORG1_DOMAIN}/ca/ca.${ORG1_DOMAIN}-cert.pem
@@ -111,7 +108,6 @@ setGlobalsForPeer0Org2(){
         export ORG=$ORG2
         export ORG_DOMAIN=$ORG2_DOMAIN
         export ORG_PORT=$ORG2_PORT
-        export CA_NAME=${ORG2_CANAME}
         export CA_PORT=${ORG2_CA_PORT}
         export PEERPEM=${PWD}/organizations/peerOrganizations/${ORG2_DOMAIN}/tlsca/tlsca.${ORG2_DOMAIN}-cert.pem
         export CAPEM=${PWD}/organizations/peerOrganizations/${ORG2_DOMAIN}/ca/ca.${ORG2_DOMAIN}-cert.pem

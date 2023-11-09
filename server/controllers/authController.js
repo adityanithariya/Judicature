@@ -1,6 +1,8 @@
 const User = require('../models/User.js');
 const jwt = require('jsonwebtoken');
 const { promisify } = require('util');
+const { registerAndEnrollUser } = require('../utils/registerUser.js');
+const { getFabric } = require('../fabric/index.js');
 const sendEmail = require('../utils/email');
 
 const signToken = (id) => {
@@ -42,6 +44,16 @@ exports.signUp = async (req, res) => {
 
     const token = signToken(_id);
     res.cookie('jwt', token, { httpOnly: false, secure: false });
+
+    // const { wallet, caClient } = await getFabric('raj', 'raj.gov.in', username);
+    // await registerAndEnrollUser(
+    //     caClient,
+    //     wallet,
+    //     'RajGovtMSP',
+    //     newusername,
+    //     'org1.department1'
+    // );
+
     return {
         status: 'success',
         data: {

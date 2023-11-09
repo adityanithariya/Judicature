@@ -6,4 +6,6 @@ install-fabric.sh
 
 node_modules/
 temp
+dist
 connection-profile
+chaincode-*
