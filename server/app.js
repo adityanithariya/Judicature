@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
-require('./fabric/initDB.js');
 dotenv.config({ path: './config.env' });
 
 const envVars = [

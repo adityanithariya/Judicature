@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
-const { Category } = require('./Organization');
 
 const userSchema = mongoose.Schema({
     username: {
@@ -13,30 +12,6 @@ const userSchema = mongoose.Schema({
         type: String,
         unique: true,
         required: [true, 'Email is required'],
-    },
-    firstName: {
-        type: String,
-        default: null,
-    },
-    lastName: {
-        type: String,
-        default: null,
-    },
-    phone: {
-        type: String,
-        default: null,
-    },
-    org: {
-        type: String,
-        default: null,
-    },
-    state: {
-        type: String,
-        default: null,
-    },
-    city: {
-        type: String,
-        default: null,
     },
     password: {
         type: String,
@@ -55,10 +30,6 @@ const userSchema = mongoose.Schema({
     passwordResetExpires: {
         default: 0,
         type: Number,
-    },
-    role: {
-        type: String,
-        enum: Object.values(Category),
     },
     active: {
         type: Boolean,

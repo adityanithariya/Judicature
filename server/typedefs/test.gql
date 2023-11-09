@@ -1,5 +1,0 @@
-input testInput {
-    isEvaluate: Boolean!
-    functionName: String!
-    arr: [String]!
-}
