@@ -5,8 +5,7 @@ input fileDataInput {
 }
 
 type fileData {
-    CID: String!
     fileName: String!
     extension: String!
-    base64String: String
+    base64String: String!
 }

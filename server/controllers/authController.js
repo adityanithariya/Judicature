@@ -1,9 +1,8 @@
 const User = require('../models/User.js');
 const jwt = require('jsonwebtoken');
 const { promisify } = require('util');
-const { registerAndEnrollUser } = require('../utils/registerUser.js');
-const { getFabric } = require('../fabric/index.js');
 const sendEmail = require('../utils/email');
+const welcomeMsg = require('../utils/welcomeMsg.json');
 
 const signToken = (id) => {
     return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -12,7 +11,7 @@ const signToken = (id) => {
 };
 
 exports.signUp = async (req, res) => {
-    const { username, email, password } = req.body.variables.user;
+    const { username, email, password, role } = req.body.variables.user;
     let user = await User.findOne({ username });
     if (!user) {
         user = await User.findOne({ email });
@@ -29,9 +28,10 @@ exports.signUp = async (req, res) => {
         username: username,
         email: email,
         password: password,
+        role: `${role}contract`,
     });
 
-    const message = `Dear ${newusername},\nWelcome to Judicature!\n\nWe're thrilled to have you join our community. At Judicature, we understand the importance of securing and verifying your documents. That's why we've created a platform where you can safely store your documents and have them verified by the government with ease.\n\nGetting Started:\n1. Upload Your Documents: Start by uploading the documents you wish to secure and verify.\n2. Request Verification: Once uploaded, you can request government verification for your documents.\n3. Share & Access: After verification, you can share your documents with trusted individuals or access them anytime, anywhere.\nRemember, your trust is our top priority. We're committed to providing you with a seamless experience and ensuring the utmost security for your documents.\n\nIf you have any questions or need assistance, please don't hesitate to reach out to our support team at support@judicature.com.\n\nThank you for choosing Judicature. We look forward to serving you!\nWarm regards,\nThe Judicature Team`;
+    const message = `Dear ${newusername},\n${JSON.stringify(welcomeMsg)}`;
     if (process.env.NODE_ENV == 'prod') {
         await sendEmail({
             email: email,
@@ -44,15 +44,6 @@ exports.signUp = async (req, res) => {
 
     const token = signToken(_id);
     res.cookie('jwt', token, { httpOnly: false, secure: false });
-
-    // const { wallet, caClient } = await getFabric('raj', 'raj.gov.in', username);
-    // await registerAndEnrollUser(
-    //     caClient,
-    //     wallet,
-    //     'RajGovtMSP',
-    //     newusername,
-    //     'org1.department1'
-    // );
 
     return {
         status: 'success',

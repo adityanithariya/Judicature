@@ -4,6 +4,7 @@ type Mutation {
     forgotPassword(user: forgotPasswordUser!): String!
     resetPassword(user: resetPasswordUser!): String!
     updatePassword(user: updatePasswordUser!): String!
-    uploadFile(file: fileDataInput!): fileData!
+    uploadFile(file: fileDataInput!): String!
+    updateProfile(user: profileDataInput!): String!
     test(var: testInput): String!
 }
