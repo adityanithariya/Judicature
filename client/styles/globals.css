@@ -4,7 +4,7 @@
 
 :root {
     --foreground-color: rgb(0, 0, 0);
-    --background-color:rgb(225, 233, 243);
+    /* --background-color: rgb(225, 233, 243); */
 }
 
 * {
@@ -21,4 +21,10 @@ body {
 a {
     color: inherit;
     text-decoration: none;
+}
+
+.input-field:focus + .input-label,
+.input-field:not(:placeholder-shown) + .input-label {
+    font-size: x-small;
+    top: 1rem;
 }
