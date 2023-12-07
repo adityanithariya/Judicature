@@ -6,7 +6,11 @@ module.exports = {
         './app/**/*.{js,ts,jsx,tsx,mdx}',
     ],
     theme: {
-        extend: {},
+        extend: {
+            backgroundImage: {
+                navbar: 'linear-gradient(340deg, #2374EE 15.09%, #37A0EA 88.54%)',
+            },
+        },
     },
     plugins: [],
 };
