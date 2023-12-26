@@ -4,13 +4,17 @@
 
 :root {
     --foreground-color: rgb(0, 0, 0);
-    --background-color:rgb(225, 233, 243);
+    --background-color: rgb(225, 233, 243);
 }
 
 * {
     box-sizing: border-box;
     padding: 0;
     margin: 0;
+}
+
+.nout:focus {
+    outline: none;
 }
 
 body {
@@ -21,4 +25,9 @@ body {
 a {
     color: inherit;
     text-decoration: none;
+}
+
+input, button {
+    outline: none;
+    border: none;
 }

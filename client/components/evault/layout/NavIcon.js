@@ -8,7 +8,7 @@ const NavIcon = ({ href, title, Icon, iconStyle, linkStyle }) => {
         <abbr title={title || href.charAt(1).toUpperCase() + href.slice(2)}>
             <Link
                 href={href}
-                className={`grid place-items-center p-2 rounded-xl border-[#FFFFFF01] hover:border-[#FFFFFF80] border-[1px] ${
+                className={`grid place-items-center p-2 rounded-xl border-[#FFFFFF01] hover:border-[#FFFFFF80] focus:border-[#FFFFFF80] nout border-[1px] ${
                     pathname === href
                         ? 'bg-[#FFFFFF35] hover:border-[#FFFFFF30]'
                         : ''

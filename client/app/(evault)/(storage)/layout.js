@@ -4,11 +4,12 @@ import React from 'react';
 import { PiVaultFill } from 'react-icons/pi';
 import { BiSolidNotification, BiSolidUserCircle } from 'react-icons/bi';
 import { IoMdSettings } from 'react-icons/io';
-import { HiMiniDocumentDuplicate } from 'react-icons/hi2';
-import { FaChevronLeft } from 'react-icons/fa';
+import { HiMiniDocumentDuplicate, HiMiniTrash } from 'react-icons/hi2';
+import { FaChevronLeft, FaShare } from 'react-icons/fa';
+import { AiFillStar } from 'react-icons/ai';
 import styles from '@styles/layout.module.css';
 import NavIcon from '@components/evault/layout/NavIcon';
-import Link from 'next/link';
+import NavItem from '@components/evault/layout/NavItem';
 
 const StorageLayout = ({ children }) => {
     return (
@@ -37,28 +38,44 @@ const StorageLayout = ({ children }) => {
                     }
                 />
             </div>
-            <div className="flex bg-white rounded-s-[60px] w-[100%]">
+            <div className="flex bg-white rounded-s-[60px] w-full">
                 <div>
                     <div className="pt-10 pl-5">
-                        <div className="bg-[#E3E3FF] grid place-items-center w-fit p-1 my-2 rounded-md">
+                        <button className="absolute bg-[#E3E3FF] grid place-items-center w-fit p-1 my-2 rounded-md">
                             <FaChevronLeft className="text-[#00000060] w-3 h-3" />
-                        </div>
-                        <h2 className="py-5 text-xl font-semibold">Storage</h2>
+                        </button>
+                        <h2 className="py-5 text-xl font-semibold pt-[3.5rem]">
+                            Storage
+                        </h2>
                     </div>
                     <div>
-                        <Link
+                        <NavItem
+                            title="My Files"
                             href="/my-files"
-                            className="flex gap-5 justify-start items-center pl-5 py-2.5 bg-[#37A0EA2E] w-[232px] rounded-r-[45px] hover:border-[#37A0EAB5] border-[1px] border-l-0 border-[#ffffff01]"
-                        >
-                            <HiMiniDocumentDuplicate className="w-5 h-5 text-[#37A0EA]" />
-                            <div className="text-sm text-[#37A0EA]">
-                                My Files
-                            </div>
-                        </Link>
+                            Icon={HiMiniDocumentDuplicate}
+                        />
+                        <NavItem
+                            title="Shared with me"
+                            href="shared"
+                            Icon={FaShare}
+                            iconStyle="h-4"
+                        />
+                        <NavItem
+                            title="Starred"
+                            href="starred"
+                            Icon={AiFillStar}
+                        />
+                        <NavItem
+                            title="Trash"
+                            href="trash"
+                            Icon={HiMiniTrash}
+                            iconStyle="h-[1.15rem]"
+                        />
                     </div>
                 </div>
-
-                <div className="w-[100%]">{children}</div>
+                <div className="ml-2 w-full bg-[#F3F6F9] rounded-s-[60px]">
+                    {children}
+                </div>
             </div>
         </div>
     );
