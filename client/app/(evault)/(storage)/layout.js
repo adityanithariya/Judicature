@@ -7,6 +7,7 @@ import { IoMdSettings } from 'react-icons/io';
 import { HiMiniDocumentDuplicate, HiMiniTrash } from 'react-icons/hi2';
 import { FaChevronLeft, FaShare } from 'react-icons/fa';
 import { AiFillStar } from 'react-icons/ai';
+import { FaCloud } from 'react-icons/fa6';
 import styles from '@styles/layout.module.css';
 import NavIcon from '@components/evault/layout/NavIcon';
 import NavItem from '@components/evault/layout/NavItem';
@@ -71,6 +72,15 @@ const StorageLayout = ({ children }) => {
                             Icon={HiMiniTrash}
                             iconStyle="h-[1.15rem]"
                         />
+                    </div>
+                    <div className="ml-4 mt-5 mr-3">
+                        <div className="h-[5px] rounded-lg bg-[#E1E1E1] overflow-hidden">
+                            <div className="bg-[#37A0EABF] h-full w-[70%] rounded-lg"></div>
+                        </div>
+                        <div className="text-[#48484D] flex justify-start items-center gap-3 mt-3 ml-2">
+                            <FaCloud className="w-4 h-4" />
+                            <div className='text-xs'>9GB of 15GB used</div>
+                        </div>
                     </div>
                 </div>
                 <div className="ml-2 w-full bg-[#F3F6F9] rounded-s-[60px]">

@@ -2,7 +2,6 @@ import { NextResponse } from 'next/server';
 
 export function middleware(request) {
     const requestHeaders = new Headers(request.headers);
-    console.log(request.url);
     const url = new URL(request.url);
     requestHeaders.set('x-pathname', url.pathname);
 

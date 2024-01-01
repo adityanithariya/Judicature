@@ -29,5 +29,9 @@ a {
 
 input, button {
     outline: none;
-    border: none;
+    border-width: 0;
+}
+
+.dialogOpen {
+    overflow: hidden;
 }

@@ -8,7 +8,7 @@ const SearchBar = () => {
     const [query, setQuery] = useState('');
     return (
         <div className="relative w-[40dvw] flex h-12 ml-20 rounded-md bg-white">
-            <label for="search" className="w-6 h-6 my-auto ml-4">
+            <label htmlFor="search" className="w-6 h-6 my-auto ml-4">
                 <AiOutlineSearch className="text-[#00000080] w-full h-full" />
             </label>
             <div className="w-full relative ml-5 mr-2">
@@ -20,7 +20,7 @@ const SearchBar = () => {
                     onChange={(e) => setQuery(e.target.value)}
                 />
                 <label
-                    for="search"
+                    htmlFor="search"
                     className={`absolute translate-y-[-50%] top-[50%] ${
                         query.trim() ? 'z-[-1]' : 'text-[#00000066]'
                     } cursor-text text-[.9rem]`}
