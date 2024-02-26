@@ -1,0 +1,19 @@
+{
+	"name": "judicature",
+	"version": "0.1.0",
+	"private": true,
+	"author": "adityanithariya",
+	"license": "MIT",
+	"scripts": {
+		"format": "biome format . --write",
+		"lint": "biome format --write . && biome check . --apply",
+		"stage": "yarn lint && git add ."
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^1.5.3",
+		"simple-git-hooks": "^2.9.0"
+	},
+	"simple-git-hooks": {
+		"pre-commit": "yarn format && yarn lint"
+	}
+}

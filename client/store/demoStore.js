@@ -1,7 +1,7 @@
-import { create } from "zustand"
+import { create } from "zustand";
 
 const demoStore = create((set) => ({
-    key: "value"
+	key: "value",
 }));
 
-export default demoStore
+export default demoStore;

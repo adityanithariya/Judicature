@@ -1,1 +1,1 @@
-export { default as demoStore } from './demoStore';
+export { default as demoStore } from "./demoStore";
