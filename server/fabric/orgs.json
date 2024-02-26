@@ -1,0 +1,28 @@
+[
+	{
+		"msp": "CentralGovt",
+		"orgUrl": "india.gov.in",
+		"orgName": "Central Government",
+		"category": "evault",
+		"sub": [
+			{
+				"msp": "RajGovt",
+				"orgUrl": "raj.gov.in",
+				"orgName": "Rajasthan"
+			}
+		]
+	},
+	{
+		"msp": "SCI",
+		"orgUrl": "main.sci.gov.in",
+		"orgName": "Supreme Court of India",
+		"category": "forum",
+		"sub": [
+			{
+				"msp": "HCRaj",
+				"orgUrl": "hcraj.nic.in",
+				"orgName": "High Court of Rajasthan"
+			}
+		]
+	}
+]

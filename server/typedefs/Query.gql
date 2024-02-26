@@ -1,3 +1,4 @@
 type Query {
-    retrieveFile(cid: String!): fileData!
+    retrieveFile(key: String!): fileData!
+    allStates:[String]
 }
