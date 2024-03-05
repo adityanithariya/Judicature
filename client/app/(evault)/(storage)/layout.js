@@ -2,6 +2,12 @@
 
 import NavIcon from "@components/evault/layout/NavIcon";
 import NavItem from "@components/evault/layout/NavItem";
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuLabel,
+	DropdownMenuTrigger,
+} from "@components/ui/dropdown-menu";
 import styles from "@styles/layout.module.css";
 import React from "react";
 import { AiFillStar } from "react-icons/ai";

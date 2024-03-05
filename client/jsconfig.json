@@ -6,7 +6,8 @@
             "@graphql/*": ["./graphql/*"],
             "@public/*": ["./public/*"],
             "@store/*": ["./store/*"],
-            "@styles/*": ["./styles/*"]
+            "@styles/*": ["./styles/*"],
+            "@utils/*": ["./utils/*"]
         }
     }
 }

@@ -3,6 +3,11 @@ import Folder from "@components/evault/dashboard/Folder";
 import SearchBar from "@components/evault/dashboard/SearchBar";
 import SortDialog from "@components/evault/dialog/SortDialog";
 import TableList from "@components/icons/TableList";
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuTrigger,
+} from "@components/ui/dropdown-menu";
 import { BsFillCaretDownFill } from "react-icons/bs";
 import { FiArrowDown } from "react-icons/fi";
 import { MdInfoOutline } from "react-icons/md";
@@ -30,29 +35,36 @@ const MyFiles = () => {
 						</button>
 					</div>
 				</div>
-				<div className="absolute right-1 -bottom-10 gap-3 flex items-center justify-center text-[#3E3E3E]">
-					<button
-						type="button"
-						className="w-8 h-8 rounded-3xl hover:bg-hover flex justify-center items-center"
-					>
-						<FiArrowDown className="w-5 h-5" />
-					</button>
-					<div className="relative">
+				<div className="flex justify-end">
+					<div className="gap-3 flex items-center w-fit justify-center text-[#3E3E3E]">
 						<button
 							type="button"
-							className="flex justify-center items-center px-4 py-1.5 gap-2 rounded-2xl hover:bg-hover"
+							className="w-8 h-8 rounded-3xl hover:bg-hover flex justify-center items-center"
 						>
-							<div className="text-sm">Name</div>
-							<BsFillCaretDownFill className="w-3 h-3" />
+							<FiArrowDown className="w-5 h-5" />
 						</button>
-						<SortDialog />
+						<DropdownMenu>
+							<DropdownMenuTrigger asChild>
+								<span className="cursor-pointer flex justify-center items-center px-4 py-1.5 gap-2 rounded-2xl hover:bg-hover">
+									<div className="text-sm">Name</div>
+									<BsFillCaretDownFill className="w-3 h-3" />
+								</span>
+							</DropdownMenuTrigger>
+							<DropdownMenuContent className="p-0 mr-2">
+								<SortDialog />
+							</DropdownMenuContent>
+						</DropdownMenu>
+						<DropdownMenu>
+							<DropdownMenuTrigger asChild>
+								<span className="w-8 h-8 rounded-3xl hover:bg-hover flex justify-center items-center cursor-pointer">
+									<PiDotsThreeVerticalBold className="w-5 h-5" />
+								</span>
+							</DropdownMenuTrigger>
+							<DropdownMenuContent className="p-0 mr-2">
+								<SortDialog />
+							</DropdownMenuContent>
+						</DropdownMenu>
 					</div>
-					<button
-						type="button"
-						className="w-8 h-8 rounded-3xl hover:bg-hover flex justify-center items-center"
-					>
-						<PiDotsThreeVerticalBold className="w-5 h-5" />
-					</button>
 				</div>
 			</div>
 			<div className="mx-6 mt-6">

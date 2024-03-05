@@ -26,14 +26,16 @@ const SortItem = ({ title, selected, order, reverse }) => {
 
 const SortDialog = ({ isOpen }) => {
 	return (
-		<div className="absolute top-[120%] left-0 z-30 rounded-md shadow-sortDialog1 bg-white h-32 w-36">
+		<>
+			{/* <div className="absolute top-[120%] left-0 z-30 rounded-md shadow-sortDialog1 bg-white h-32 w-36"> */}
 			<div className="text-xs mt-3 ml-2 mb-2 w-fit">Sort By</div>
 			<div>
 				<SortItem title="Name" selected order />
 				<SortItem title="Last Modified" />
 				<SortItem title="Owner" />
 			</div>
-		</div>
+			{/* </div> */}
+		</>
 	);
 };
 
