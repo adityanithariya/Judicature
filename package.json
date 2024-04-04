@@ -7,7 +7,16 @@
 	"scripts": {
 		"format": "biome format . --write",
 		"lint": "biome format --write . && biome check . --apply",
-		"stage": "yarn lint && git add ."
+		"stage": "yarn lint && git add .",
+		"client:install": "cd client && yarn",
+		"client:dev": "cd client && yarn dev",
+		"client:build": "cd client && yarn build",
+		"client:start": "cd client && yarn start",
+		"server:install": "cd server && yarn",
+		"server:start": "cd server && yarn start",
+		"network:start": "cd hyperledger/network && ./network.sh test evaultcontract 1",
+		"install": "yarn client:install && yarn server:install",
+		"start": "yarn network:start && yarn server:start && yarn client:start"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^1.5.3",

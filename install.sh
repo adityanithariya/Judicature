@@ -1,5 +1,5 @@
 echo "Updating & Upgrading...\n\n"
-# sudo apt update -y && apt upgrade -y
+sudo apt update -y && apt upgrade -y
 
 echo "Basic Installation...\n\n"
 sudo apt-get install \
@@ -24,14 +24,14 @@ curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
 NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 
-sudo nvm install 18.17.0
-sudo nvm use 18.17.0
-sudo npm i -g docker-compose
+nvm install 18.17.0
+nvm use 18.17.0
+npm i -g docker-compose
 
 sudo apt-get install libltdl-dev -y
 
 echo "Hyperledger Install..."
-# curl -sSLO https://raw.githubusercontent.com/hyperledger/fabric/main/scripts/install-fabric.sh && chmod +x install-fabric.sh
-# ./install-fabric.sh b d
+curl -sSLO https://raw.githubusercontent.com/hyperledger/fabric/main/scripts/install-fabric.sh && chmod +x install-fabric.sh
+./install-fabric.sh b d
 
 # sudo reboot
