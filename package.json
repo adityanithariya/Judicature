@@ -8,13 +8,19 @@
 		"format": "biome format . --write",
 		"lint": "biome format --write . && biome check . --apply",
 		"stage": "yarn lint && git add .",
+
 		"client:install": "cd client && yarn",
 		"client:dev": "cd client && yarn dev",
 		"client:build": "cd client && yarn build",
 		"client:start": "cd client && yarn start",
+
 		"server:install": "cd server && yarn",
-		"server:start": "cd server && yarn start",
-		"network:start": "cd hyperledger/network && ./network.sh test evaultcontract 1",
+		"server:dev": "yarn network:start && cd server && yarn dev",
+		"server:start": "yarn network:start && cd server && yarn start",
+
+		"network:up": "cd hyperledger/singleton-network && ./network.sh up",
+		"network:down": "cd hyperledger/singleton-network && ./network.sh down",
+
 		"install": "yarn client:install && yarn server:install",
 		"start": "yarn network:start && yarn server:start && yarn client:start"
 	},

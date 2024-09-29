@@ -1,3 +1,5 @@
+#!/bin/bash
+
 if [ $# -lt 1 -o $1 == "-h" ]; then
     echo "Usage: ./createChannel.sh <create|join|update|all> [-org1 <domain> <mspID> <port>] [-org2 <domain> <mspID> <port>] [-ch <channelName>] [-p <profile>]"
     exit 1
@@ -73,8 +75,8 @@ generateCCP() {
     fi
 }
 
-chmod +x ./init.sh
-. init.sh
+# chmod +x ./init.sh
+# . init.sh
 
 if [ "$COMMAND" == "create" ]; then
     createChannel
@@ -84,10 +86,10 @@ elif [ "$COMMAND" == "update" ]; then
     updateAnchorPeers
 elif [ "$COMMAND" == "all" ]; then
     generateCCP
-    sleep 5
+    sleep 30
     createChannel
-    sleep 10
+    sleep 20
     joinChannel
-    sleep 5
+    sleep 20
     updateAnchorPeers
 fi

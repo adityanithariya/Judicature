@@ -1,3 +1,5 @@
+#!/bin/bash
+
 generateCryptoMaterial() {
     echo "Generating crypto material"
 

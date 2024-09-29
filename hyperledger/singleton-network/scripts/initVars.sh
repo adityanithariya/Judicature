@@ -10,20 +10,12 @@ fi
 
 while [ "$#" -gt 0 ]; do
     case "$1" in
-        --org1)
-            export ORG1=$2
-            export ORG1_DOMAIN=$3
-            export ORG1_MSPID="${2}MSP"
-            export ORG1_PORT=$4
-            export ORG1_CA_PORT=$5
-            shift 5
-            ;;
-        --org2)
-            export ORG2=$2
-            export ORG2_DOMAIN=$3
-            export ORG2_MSPID="${2}MSP"
-            export ORG2_PORT=$4
-            export ORG2_CA_PORT=$5
+        --org)
+            export ORG=$2
+            export ORG_DOMAIN=$3
+            export ORG_MSPID="${2}MSP"
+            export ORG_PORT=$4
+            export ORG_CA_PORT=$5
             shift 5
             ;;
         --channel|-c)
@@ -57,14 +49,14 @@ while [ "$#" -gt 0 ]; do
     esac
 done
 
-if [ -z "$ORG1_DOMAIN" ]; then
-    echo "ORG1_DOMAIN is not set"
+if [ -z "$ORG_DOMAIN" ]; then
+    echo "ORG_DOMAIN is not set"
     exit 1
-elif [ -z "$ORG1_MSPID" ]; then
-    echo "ORG1_MSPID is not set"
+elif [ -z "$ORG_MSPID" ]; then
+    echo "ORG_MSPID is not set"
     exit 1
-elif [ -z "$ORG1_PORT" ]; then
-    echo "ORG1_PORT is not set"
+elif [ -z "$ORG_PORT" ]; then
+    echo "ORG_PORT is not set"
     exit 1
 elif [ -z "$ORG2_DOMAIN" ]; then
     echo "ORG2_DOMAIN is not set"
@@ -82,23 +74,22 @@ fi
 
 export CORE_PEER_TLS_ENABLED=true
 export ORDERER_CA=${PWD}/organizations/ordererOrganizations/sci.gov.in/orderers/orderer.sci.gov.in/msp/tlscacerts/tlsca.sci.gov.in-cert.pem
-export PEER0_ORG1_CA=${PWD}/organizations/peerOrganizations/${ORG1_DOMAIN}/peers/peer0.${ORG1_DOMAIN}/tls/ca.crt
-export PEER0_ORG2_CA=${PWD}/organizations/peerOrganizations/${ORG2_DOMAIN}/peers/peer0.${ORG2_DOMAIN}/tls/ca.crt
+export PEER0_ORG_CA=${PWD}/organizations/peerOrganizations/${ORG_DOMAIN}/peers/peer0.${ORG_DOMAIN}/tls/ca.crt
 export FABRIC_CFG_PATH=${PWD}/config/
 
-setGlobalsForPeer0Org1(){
-    export CORE_PEER_LOCALMSPID=$ORG1_MSPID
-    export CORE_PEER_TLS_ROOTCERT_FILE=$PEER0_ORG1_CA
-    export CORE_PEER_MSPCONFIGPATH=${PWD}/organizations/peerOrganizations/${ORG1_DOMAIN}/users/Admin@${ORG1_DOMAIN}/msp
-    export CORE_PEER_ADDRESS=localhost:${ORG1_PORT}
+setGlobalsForPeer0ORG(){
+    export CORE_PEER_LOCALMSPID=$ORG_MSPID
+    export CORE_PEER_TLS_ROOTCERT_FILE=$PEER0_ORG_CA
+    export CORE_PEER_MSPCONFIGPATH=${PWD}/organizations/peerOrganizations/${ORG_DOMAIN}/users/Admin@${ORG_DOMAIN}/msp
+    export CORE_PEER_ADDRESS=localhost:${ORG_PORT}
     export FABRIC_CFG_PATH=${PWD}/config/
     if [[ $1 == true ]]; then
-        export ORG=$ORG1
-        export ORG_DOMAIN=$ORG1_DOMAIN
-        export ORG_PORT=$ORG1_PORT
-        export CA_PORT=${ORG1_CA_PORT}
-        export PEERPEM=${PWD}/organizations/peerOrganizations/${ORG1_DOMAIN}/tlsca/tlsca.${ORG1_DOMAIN}-cert.pem
-        export CAPEM=${PWD}/organizations/peerOrganizations/${ORG1_DOMAIN}/ca/ca.${ORG1_DOMAIN}-cert.pem
+        export ORG=$ORG
+        export ORG_DOMAIN=$ORG_DOMAIN
+        export ORG_PORT=$ORG_PORT
+        export CA_PORT=${ORG_CA_PORT}
+        export PEERPEM=${PWD}/organizations/peerOrganizations/${ORG_DOMAIN}/tlsca/tlsca.${ORG_DOMAIN}-cert.pem
+        export CAPEM=${PWD}/organizations/peerOrganizations/${ORG_DOMAIN}/ca/ca.${ORG_DOMAIN}-cert.pem
     fi
 }
 

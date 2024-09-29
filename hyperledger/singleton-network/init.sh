@@ -1,15 +1,14 @@
 #!/bin/bash
 
-# chmod +x network.sh
-
 export PATH=${PWD}/../bin:${PWD}/../../bin:${PWD}/scripts:$PATH
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+export FABRIC_CFG_PATH="$(pwd)/config"
 
-nvm install 18.17.0
-nvm use 18.17.0
-npm i -g yarn
+chmod +x ./scripts/utils.sh
+. scripts/utils.sh
+
+chmod +x ./cryptogen/init.sh
+. cryptogen/init.sh
+
 
 if ! command -v cryptogen >/dev/null 2>&1; then
     echo "bin not found!"
@@ -47,5 +46,17 @@ loadingPID() {
         if ! ps -p $pid > /dev/null; then
             break
         fi
+    done
+}
+
+recreate() {
+    while [ "$#" -gt 0 ]; do
+        [ -d $1 ] && rm -rf $1 > /dev/null 2>&1
+        if [[ $? == 1 ]] && [[ -d $1 ]]; then
+            println "Please delete $1 with elevated permissions!"
+            exit 0
+        fi
+        [ ! -d $1 ] && mkdir -p $1
+        shift 1
     done
 }

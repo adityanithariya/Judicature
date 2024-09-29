@@ -1,3 +1,5 @@
+#!/bin/bash
+
 if [ -z "$1" ]; then
     echo -e "Usage: ./deployChaincode.sh -lang <language> -v <version> -src <path> -name <name>"
     exit 1

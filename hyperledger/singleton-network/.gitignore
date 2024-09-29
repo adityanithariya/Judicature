@@ -1,0 +1,8 @@
+organizations/ordererOrganizations/*
+organizations/peerOrganizations/*
+*.pb
+*.tx
+*.log
+*.tar.gz
+./configtx.yaml
+organizations/fabric-ca/*
