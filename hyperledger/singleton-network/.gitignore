@@ -1,6 +1,6 @@
 organizations/ordererOrganizations/*
 organizations/peerOrganizations/*
-*.pb
+*.block
 *.tx
 *.log
 *.tar.gz

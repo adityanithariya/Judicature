@@ -1,147 +1,147 @@
+# Copyright IBM Corp. All Rights Reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+volumes:
+  orderer.judicature.com:
+  peer0.judicature.com:
+
 networks:
     test:
         name: judicature
 
 services:
-    ca-judicature:
-        image: hyperledger/fabric-ca
-        environment:
-            - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
-            - FABRIC_CA_SERVER_CA_NAME=judicature.com
-            - FABRIC_CA_SERVER_CA_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.judicature.com-cert.pem
-            - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server-config/priv_sk
-            - FABRIC_CA_SERVER_TLS_ENABLED=true
-            - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-tls/tlsca.judicature.com-cert.pem
-            - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-tls/priv_sk
-        ports:
-            - '7054:7054'
-        command: sh -c 'fabric-ca-server start -b admin:adminpw -d'
-        volumes:
-            - ./organizations/peerOrganizations/judicature.com/ca/:/etc/hyperledger/fabric-ca-server-config
-            - ./organizations/peerOrganizations/judicature.com/tlsca/:/etc/hyperledger/fabric-ca-server-tls
-        container_name: ca.judicature.com
-        hostname: ca.judicature.com
-        networks:
-            - test
-
     orderer.judicature.com:
         container_name: orderer.judicature.com
-        image: hyperledger/fabric-orderer
-        dns_search: .
+        image: hyperledger/fabric-orderer:latest
+        labels:
+            service: hyperledger-fabric
         environment:
-            - ORDERER_GENERAL_LOGLEVEL=info
             - FABRIC_LOGGING_SPEC=INFO
             - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
-            - ORDERER_GENERAL_GENESISMETHOD=file
-            - ORDERER_GENERAL_GENESISFILE=/var/hyperledger/orderer/genesis.block
+            - ORDERER_GENERAL_LISTENPORT=7050
             - ORDERER_GENERAL_LOCALMSPID=OrdererMSP
             - ORDERER_GENERAL_LOCALMSPDIR=/var/hyperledger/orderer/msp
             - ORDERER_GENERAL_TLS_ENABLED=true
+            # enabled TLS
             - ORDERER_GENERAL_TLS_PRIVATEKEY=/var/hyperledger/orderer/tls/server.key
             - ORDERER_GENERAL_TLS_CERTIFICATE=/var/hyperledger/orderer/tls/server.crt
             - ORDERER_GENERAL_TLS_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
-            - ORDERER_KAFKA_VERBOSE=true
             - ORDERER_GENERAL_CLUSTER_CLIENTCERTIFICATE=/var/hyperledger/orderer/tls/server.crt
             - ORDERER_GENERAL_CLUSTER_CLIENTPRIVATEKEY=/var/hyperledger/orderer/tls/server.key
             - ORDERER_GENERAL_CLUSTER_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
+            - ORDERER_GENERAL_BOOTSTRAPMETHOD=none
+            - ORDERER_CHANNELPARTICIPATION_ENABLED=true
+            - ORDERER_ADMIN_TLS_ENABLED=true
+            - ORDERER_ADMIN_TLS_CERTIFICATE=/var/hyperledger/orderer/tls/server.crt
+            - ORDERER_ADMIN_TLS_PRIVATEKEY=/var/hyperledger/orderer/tls/server.key
+            - ORDERER_ADMIN_TLS_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
+            - ORDERER_ADMIN_TLS_CLIENTROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
+            - ORDERER_ADMIN_LISTENADDRESS=0.0.0.0:7053
+            - ORDERER_OPERATIONS_LISTENADDRESS=orderer.judicature.com:9443
             - ORDERER_METRICS_PROVIDER=prometheus
-            - ORDERER_OPERATIONS_LISTENADDRESS=0.0.0.0:8443
-            - ORDERER_GENERAL_LISTENPORT=7050
-        working_dir: /opt/gopath/src/github.com/hyperledger/fabric/orderers
+            - FABRIC_LOGGING_SPEC=INFO
+        working_dir: /root
         command: orderer
+        volumes:
+            - ./organizations/ordererOrganizations/judicature.com/orderers/orderer.judicature.com/msp:/var/hyperledger/orderer/msp
+            - ./organizations/ordererOrganizations/judicature.com/orderers/orderer.judicature.com/tls/:/var/hyperledger/orderer/tls
+            - orderer.judicature.com:/var/hyperledger/production/orderer
         ports:
             - 7050:7050
-            - 8443:8443
+            - 7053:7053
+            - 9443:9443
         networks:
             - test
-        volumes:
-            - ./channel-artifacts/genesis.block:/var/hyperledger/orderer/genesis.block
-            - ./organizations/ordererOrganizations/judicature.com/orderers/orderer.judicature.com/msp:/var/hyperledger/orderer/msp
-            - ./organizations/ordererOrganizations/judicature.com/orderers/orderer.judicature.com/tls:/var/hyperledger/orderer/tls
 
-    orderer2.judicature.com:
-        container_name: orderer2.judicature.com
-        image: hyperledger/fabric-orderer
-        dns_search: .
-        environment:
-            - ORDERER_GENERAL_LOGLEVEL=info
-            - FABRIC_LOGGING_SPEC=info
-            - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
-            - ORDERER_GENERAL_GENESISMETHOD=file
-            - ORDERER_GENERAL_GENESISFILE=/var/hyperledger/orderer/orderer.genesis.block
-            - ORDERER_GENERAL_LOCALMSPID=OrdererMSP
-            - ORDERER_GENERAL_LOCALMSPDIR=/var/hyperledger/orderer/msp
-            - ORDERER_GENERAL_TLS_ENABLED=true
-            - ORDERER_GENERAL_TLS_PRIVATEKEY=/var/hyperledger/orderer/tls/server.key
-            - ORDERER_GENERAL_TLS_CERTIFICATE=/var/hyperledger/orderer/tls/server.crt
-            - ORDERER_GENERAL_TLS_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
-            - ORDERER_KAFKA_VERBOSE=true
-            - ORDERER_GENERAL_CLUSTER_CLIENTCERTIFICATE=/var/hyperledger/orderer/tls/server.crt
-            - ORDERER_GENERAL_CLUSTER_CLIENTPRIVATEKEY=/var/hyperledger/orderer/tls/server.key
-            - ORDERER_GENERAL_CLUSTER_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
-            - ORDERER_METRICS_PROVIDER=prometheus
-            - ORDERER_OPERATIONS_LISTENADDRESS=0.0.0.0:8443
-            - ORDERER_GENERAL_LISTENPORT=8050
-        working_dir: /opt/gopath/src/github.com/hyperledger/fabric/orderers
-        command: orderer
-        ports:
-            - 8050:8050
-            - 8444:8443
-        networks:
-            - test
-        volumes:
-            - ./channel-artifacts/genesis.block:/var/hyperledger/orderer/orderer.genesis.block
-            - ./organizations/ordererOrganizations/judicature.com/orderers/orderer2.judicature.com/msp:/var/hyperledger/orderer/msp
-            - ./organizations/ordererOrganizations/judicature.com/orderers/orderer2.judicature.com/tls:/var/hyperledger/orderer/tls
+    # orderer2.judicature.com:
+    #     container_name: orderer2.judicature.com
+    #     image: hyperledger/fabric-orderer
+    #     dns_search: .
+    #     environment:
+    #         - ORDERER_GENERAL_LOGLEVEL=info
+    #         - FABRIC_LOGGING_SPEC=info
+    #         - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
+    #         - ORDERER_GENERAL_GENESISMETHOD=file
+    #         - ORDERER_GENERAL_GENESISFILE=/var/hyperledger/orderer/orderer.genesis.block
+    #         - ORDERER_GENERAL_LOCALMSPID=OrdererMSP
+    #         - ORDERER_GENERAL_LOCALMSPDIR=/var/hyperledger/orderer/msp
+    #         - ORDERER_GENERAL_TLS_ENABLED=true
+    #         - ORDERER_GENERAL_TLS_PRIVATEKEY=/var/hyperledger/orderer/tls/server.key
+    #         - ORDERER_GENERAL_TLS_CERTIFICATE=/var/hyperledger/orderer/tls/server.crt
+    #         - ORDERER_GENERAL_TLS_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
+    #         - ORDERER_KAFKA_VERBOSE=true
+    #         - ORDERER_GENERAL_CLUSTER_CLIENTCERTIFICATE=/var/hyperledger/orderer/tls/server.crt
+    #         - ORDERER_GENERAL_CLUSTER_CLIENTPRIVATEKEY=/var/hyperledger/orderer/tls/server.key
+    #         - ORDERER_GENERAL_CLUSTER_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
+    #         - ORDERER_METRICS_PROVIDER=prometheus
+    #         - ORDERER_OPERATIONS_LISTENADDRESS=0.0.0.0:8443
+    #         - ORDERER_GENERAL_LISTENPORT=8050
+    #     working_dir: /opt/gopath/src/github.com/hyperledger/fabric/orderers
+    #     command: orderer
+    #     ports:
+    #         - 8050:8050
+    #         - 8444:8443
+    #     networks:
+    #         - test
+    #     volumes:
+    #         - ./channel-artifacts/genesis.block:/var/hyperledger/orderer/orderer.genesis.block
+    #         - ./organizations/ordererOrganizations/judicature.com/orderers/orderer2.judicature.com/msp:/var/hyperledger/orderer/msp
+    #         - ./organizations/ordererOrganizations/judicature.com/orderers/orderer2.judicature.com/tls:/var/hyperledger/orderer/tls
 
-    orderer3.judicature.com:
-        container_name: orderer3.judicature.com
-        image: hyperledger/fabric-orderer
-        dns_search: .
-        environment:
-            - ORDERER_GENERAL_LOGLEVEL=info
-            - FABRIC_LOGGING_SPEC=info
-            - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
-            - ORDERER_GENERAL_GENESISMETHOD=file
-            - ORDERER_GENERAL_GENESISFILE=/var/hyperledger/orderer/orderer.genesis.block
-            - ORDERER_GENERAL_LOCALMSPID=OrdererMSP
-            - ORDERER_GENERAL_LOCALMSPDIR=/var/hyperledger/orderer/msp
-            - ORDERER_GENERAL_TLS_ENABLED=true
-            - ORDERER_GENERAL_TLS_PRIVATEKEY=/var/hyperledger/orderer/tls/server.key
-            - ORDERER_GENERAL_TLS_CERTIFICATE=/var/hyperledger/orderer/tls/server.crt
-            - ORDERER_GENERAL_TLS_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
-            - ORDERER_KAFKA_VERBOSE=true
-            - ORDERER_GENERAL_CLUSTER_CLIENTCERTIFICATE=/var/hyperledger/orderer/tls/server.crt
-            - ORDERER_GENERAL_CLUSTER_CLIENTPRIVATEKEY=/var/hyperledger/orderer/tls/server.key
-            - ORDERER_GENERAL_CLUSTER_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
-            - ORDERER_METRICS_PROVIDER=prometheus
-            - ORDERER_OPERATIONS_LISTENADDRESS=0.0.0.0:8443
-            - ORDERER_GENERAL_LISTENPORT=9050
-        working_dir: /opt/gopath/src/github.com/hyperledger/fabric/orderers
-        command: orderer
-        ports:
-            - 9050:9050
-            - 8445:8443
-        networks:
-            - test
-        volumes:
-            - ./channel-artifacts/genesis.block:/var/hyperledger/orderer/orderer.genesis.block
-            - ./organizations/ordererOrganizations/judicature.com/orderers/orderer3.judicature.com/msp:/var/hyperledger/orderer/msp
-            - ./organizations/ordererOrganizations/judicature.com/orderers/orderer3.judicature.com/tls:/var/hyperledger/orderer/tls
+    # orderer3.judicature.com:
+    #     container_name: orderer3.judicature.com
+    #     image: hyperledger/fabric-orderer
+    #     dns_search: .
+    #     environment:
+    #         - ORDERER_GENERAL_LOGLEVEL=info
+    #         - FABRIC_LOGGING_SPEC=info
+    #         - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
+    #         - ORDERER_GENERAL_GENESISMETHOD=file
+    #         - ORDERER_GENERAL_GENESISFILE=/var/hyperledger/orderer/orderer.genesis.block
+    #         - ORDERER_GENERAL_LOCALMSPID=OrdererMSP
+    #         - ORDERER_GENERAL_LOCALMSPDIR=/var/hyperledger/orderer/msp
+    #         - ORDERER_GENERAL_TLS_ENABLED=true
+    #         - ORDERER_GENERAL_TLS_PRIVATEKEY=/var/hyperledger/orderer/tls/server.key
+    #         - ORDERER_GENERAL_TLS_CERTIFICATE=/var/hyperledger/orderer/tls/server.crt
+    #         - ORDERER_GENERAL_TLS_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
+    #         - ORDERER_KAFKA_VERBOSE=true
+    #         - ORDERER_GENERAL_CLUSTER_CLIENTCERTIFICATE=/var/hyperledger/orderer/tls/server.crt
+    #         - ORDERER_GENERAL_CLUSTER_CLIENTPRIVATEKEY=/var/hyperledger/orderer/tls/server.key
+    #         - ORDERER_GENERAL_CLUSTER_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
+    #         - ORDERER_METRICS_PROVIDER=prometheus
+    #         - ORDERER_OPERATIONS_LISTENADDRESS=0.0.0.0:8443
+    #         - ORDERER_GENERAL_LISTENPORT=9050
+    #     working_dir: /opt/gopath/src/github.com/hyperledger/fabric/orderers
+    #     command: orderer
+    #     ports:
+    #         - 9050:9050
+    #         - 8445:8443
+    #     networks:
+    #         - test
+    #     volumes:
+    #         - ./channel-artifacts/genesis.block:/var/hyperledger/orderer/orderer.genesis.block
+    #         - ./organizations/ordererOrganizations/judicature.com/orderers/orderer3.judicature.com/msp:/var/hyperledger/orderer/msp
+    #         - ./organizations/ordererOrganizations/judicature.com/orderers/orderer3.judicature.com/tls:/var/hyperledger/orderer/tls
 
     couchdb0:
         container_name: couchdb0
         image: couchdb:3.3.2
+        labels:
+            service: hyperledger-fabric
         environment:
             - COUCHDB_USER=admin
             - COUCHDB_PASSWORD=adminpw
         ports:
-            - 5984:5984
+            - "5984:5984"
         networks:
             - test
 
     peer0.judicature.com:
         container_name: peer0.judicature.com
+        labels:
+            service: hyperledger-fabric
         extends:
             file: base.yaml
             service: peer-base
@@ -162,23 +162,28 @@ services:
             # Exposed for discovery Service
             - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.judicature.com:7051
             # - CORE_OPERATIONS_LISTENADDRESS=0.0.0.0:9440
+            - CORE_METRICS_PROVIDER=prometheus
+            - CORE_PEER_TLS_ENABLED=true
+            - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/tls/server.crt
+            - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/tls/server.key
+            - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/ca.crt
+            - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/fabric/msp
+            # CouchDB
             - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
             - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb0:5984
             - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=admin
             - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=adminpw
-            - CORE_METRICS_PROVIDER=prometheus
-            - CORE_PEER_TLS_ENABLED=true
-            - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/crypto/peer/tls/server.crt
-            - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/crypto/peer/tls/server.key
-            - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/crypto/peer/tls/ca.crt
-            - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/crypto/peer/msp
+            - FABRIC_CFG_PATH=/var/hyperledger/config
         depends_on:
             - couchdb0
+        volumes:
+            - ./organizations/peerOrganizations/judicature.com/peers/peer0.judicature.com:/etc/hyperledger/fabric
+            - peer0.judicature.com:/var/hyperledger/production
+            - ./config:/var/hyperledger/config
+        working_dir: /root
+        command: peer node start
         ports:
             - 7051:7051
-        volumes:
-            - ./organizations/peerOrganizations/judicature.com/peers/peer0.judicature.com/msp:/etc/hyperledger/crypto/peer/msp
-            - ./organizations/peerOrganizations/judicature.com/peers/peer0.judicature.com/tls:/etc/hyperledger/crypto/peer/tls
-            - /var/run/:/host/var/run/
+            - 9444:9444
         networks:
             - test

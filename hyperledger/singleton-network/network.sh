@@ -36,7 +36,7 @@ createOrgs() {
 
     . ./fabric-ca/init.sh
 
-    createOrg 1
+    createOrg 0
     createOrderer
 
     # generateCryptoMaterial
@@ -52,13 +52,13 @@ networkUp() {
     set +x
     createOrgs
     set -x
-    # echo "Stopping existing containers..."
-    # docker-compose -f docker-compose.yaml down
+    echo "Stopping existing containers..."
+    docker-compose -f docker-compose.yaml down
     # [ -d "../../server/wallet" ] && rm -rf ../../server/wallet
-    # echo ""
-    # echo "Starting network"
-    # docker-compose -f docker-compose.yaml up -d
-    # echo "Network started"
+    echo ""
+    echo "Starting network"
+    docker-compose -f docker-compose.yaml up -d
+    echo "Network started"
     # echo ""
 
     # cp ./config/configtx.yaml .
@@ -116,23 +116,24 @@ networkUp() {
 # }
 
 networkDown() {
-    docker-compose -f docker-compose.yaml down --volumes --remove-orphans
-    docker-compose -f fabric-ca/docker-compose-ca.yaml down --volumes --remove-orphans
+    docker-compose -f docker-compose.yaml down
+    docker-compose -f fabric-ca/docker-compose-ca.yaml down
     [ -d "../../server/wallet" ] && rm -rf ../../server/wallet
 }
 
-checkPrereqs
-
 if [ "$COMMAND" = "up" ]; then
+    checkPrereqs
     networkUp
     exit 0
 elif [ "$COMMAND" = "down" ]; then
+    checkPrereqs
     networkDown
     exit 0
 elif [ "$COMMAND" = "deployCC" ]; then
     deployCC $2 $3
 elif [ "$COMMAND" = "clean" ]; then
     docker-compose -f docker-compose.yaml down --volumes --remove-orphans
+    docker-compose -f fabric-ca/docker-compose-ca.yaml down --volumes --remove-orphans
     docker volume prune -f
     docker network prune -f
     exit 0

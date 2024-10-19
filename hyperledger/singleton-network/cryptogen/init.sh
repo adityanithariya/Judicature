@@ -19,5 +19,5 @@ generateGenesisBlock() {
 
     : ${ARTIFACTS_PATH:="channel-artifacts"}
 
-    configtxgen -profile ChannelUsingRaft -channelID main -outputBlock ./$ARTIFACTS_PATH/genesis_block.pb -configPath ./config/
+    configtxgen -profile ChannelUsingRaft -channelID main -outputBlock ./$ARTIFACTS_PATH/genesis.block -configPath ./config/
 }
